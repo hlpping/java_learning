@@ -1,0 +1,99 @@
+如何自定义类型转化器
+  * 定义需求:
+        * 该转化器要完成从String类型(格式:yyyy-MM-dd)---->java.util.Date.class类型的转化
+        * 例如：2010-12-09 到   java.util.Date类型
+  * 自定义类型转化器(自定义类型转化器要实现Converter接口)
+        public class DateConverter  implements Converter {
+		/**
+		 * @param clazz:要转化的数据类型   java.util.Date.class
+		 * @param value:要转化的值   2010-12-09
+		 * @return
+		 */
+		public Object convert(Class clazz, Object value) {
+			System.out.println(clazz);
+			System.out.println(value);
+			if(value==null){
+				return null;
+			}
+			if(clazz==null){
+				return null;
+			}
+			if(clazz!=java.util.Date.class){
+				return null;
+			}
+	  
+			if(value  instanceof java.lang.String){
+				try {
+					String source=value.toString();
+					SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd");
+					return sf.parse(source);
+				} catch (ParseException e) {
+				  throw new RuntimeException("您输入数据不能转化为日期类型");
+				}
+			}
+			
+			return null;
+		}
+	}       
+	
+	
+	* 注册转化器(在使用之前注册)
+		/*
+		 * 注册转化器:
+		 * ConvertUtils.register(converter, clazz)
+		 *   * converter:要注册的转化器
+		 *   * clazz:要转化的数据类型
+		 */
+		ConvertUtils.register(new DateConverter(), java.util.Date.class);
+		
+
+    * 使用转化器
+       /*
+		 * vo对象的值复制到po中,使用beanUtils处理
+		 *  BeanUtils.copyProperties(emp, empForm);
+		 *    * 完成bean与bean之间属性的赋值
+		 *    * emp:目的的javaBean
+		 *    * empForm:源javaBean
+		 *    * 条件:
+		 *       * 要求,两个javaBean中的属性名称要相同,必须相同,才能复制
+		         * 两个javaBean中的属性个数多少没有影响,只找匹配的
+		 */
+		BeanUtils.copyProperties(emp, empForm);		
+	
+	
+	* 分析:转化器的运行原理:
+	    *  注册转化器(在使用之前注册)  	ConvertUtils.register(new DateConverter(), java.util.Date.class);
+	        是把转化器放置到Map集合中
+	         Map map=new HashMap();
+	         map.put(java.util.Date.class,new DateConverter())
+	       
+	        出了自己定义的转化器外,底层默认还注入很多其他的转化器 
+	         
+	    
+	    *  转化时BeanUtils.copyProperties(emp, empForm);	
+	         * private String birthday -----> private java.util.Date birthday
+	             知道要转化的数据类型是java.util.Date.class
+	          
+	         * 以java.util.Date.class为条件到map集合中查找map.get(java.util.Date.class)
+	            获取要执行的转化器new DateConverter()
+	            
+	         * 调用转化器的 convert(Class clazz, Object value)方法   
+	            
+	
+	      
+	    * 底层代码
+	       * private WeakFastHashMap converters = new WeakFastHashMap();
+	       *  converters.put(clazz, converter);  
+	
+	       
+	        
+	        public Object convert(Object value, Class type) {
+	            //通过要转化器的数据类型查找转化器
+		        Converter converter = getConvertUtils().lookup(type); type="java.util.Date.class"  
+		        converter.convert(type, value);
+		        }
+		    }
+	   
+	
+	
+	

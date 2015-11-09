@@ -1,0 +1,143 @@
+一.package
+	1.package使用
+		package语句要写在java代码的第一条语句
+	2.类的修饰符
+		如果一个类想在其他包中使用, 那么必须是public的
+		一个类如果是public的, 那么必须和文件名同名
+	3.编译带包的类
+		javac -d . Person.java		
+		-d是指定将生成的class文件放在哪个目录, .代表放在当前目录
+	4.导入包
+		一个类调用另一个类, 如果两个类在同一个包中, 不需要导包
+		如果被调用的类在java.lang包中, 不需要导包
+		其他情况需要导入调用的类所在的包
+		三种方式:
+			a).以*形式导入, 例如: import cn.itcast.day9.*;
+				这种导入形式是导入cn.itcast.day9下所有类, 但是如果当前包中有需要的类, 就不会找导入的包
+			b).以全限定名形式导入, 例如: import cn.itcast.day9.Person;
+				这种导入形式只导入一个类, 不论当前包有没有, 都会找指定的类
+			c).在使用的时候写全限定名, 例如: org.it315.day9.Person p1 = new org.it315.day9.Person("张三", 22);
+				如果一个类中使用到两个相同类名的类, 那么用a和b形式就无法导入了, 可以指定全限定名.
+	5.运行带包的类
+		java org.it315.day9.PersonTest
+		要使用类的全限定名(包名.类名)
+	6.类之间调用
+		无包的类可以调用有包的类
+		有包的类不能使用无包的类, 因为不导入包是找当前包, 而没有包的类又无法导入
+	*** 7.总结
+		我们定义类时一定都要带包, 目的是让别人都能访问到, 如果不写包, 那么别人代包的类无法使用.
+		导入包时使用全限定名形式导入, 这样不会因为当前包中有相同类名的类导致出错.
+		写类的时候要使用public修饰, 否则在其他包中不能访问. 如果类是public, 必须和文件名相同.
+		javac -d . Person.java		
+		java org.it315.day9.PersonTest
+		如果一个类想被其他包中访问, 就需要定义为public, public的类必须和文件名一致, 那么就必须单独写一个文件.
+		
+二.jar
+	1.什么是jar
+		jar是一种java文件的压缩格式, 通常我们会将class文件压缩成一个jar包
+	* 2.打jar包的方式
+		jar cvf day9.jar cn org
+		jar 参数 jar包名 文件夹名(文件名)
+	*** 3.使用jar包中的类
+		如果程序中需要使用到jar包中的类, 那么需要将jar包的绝对路径配置到classpath中
+	4.批处理文件
+		如果我们经常要执行一些相同的命令, 那么可以将这些命令写入一个文件, 命名为xxx.bat, 以后再运行这个bat文件, 就相当于执行了那些命令
+	* 5.运行jar
+		java -jar day9.jar
+		java -jar jar包名
+		需要指定Main-Class, 一个jar包中可能有多个类可以运行, 我们需要指定从哪个类开始运行.
+		在jar包的 META-INF 中的 MANIFEST.MF 中添加 Main-Class, 例如: Main-Class: cn.itcast.test.Test
+	6.exe4j
+		将jar包生成为exe文件
+		安装exe4j	exe4j_ejtechnologies.rar
+		next
+		jar in exe - next
+		起一个名字 - 确定输出的目录 - next
+		console - 输入文件名 - 传图片(必须是.ico, 可不传) - next
+		选择jar包 - 指定Main-Class - next
+		输入虚拟机最低版本 - finish
+		
+三.访问控制符
+	1.private: 只能类内部使用
+	2.default(package): 只能同一个包中使用
+	3.protected: 同一个包, 或者不同包的子类
+	4.public: 所有类
+	
+四.代码规范
+	1.标识符
+		包, 类, 方法, 变量这些名字可以以任意字母数字下划线和美元符号组成, 但不能以数字开头.
+		类名: 首字母大写, 后面每个单词首字母大写. 例如: XxxYyyZzz
+		方法名, 变量名: 首字母小写, 后面每个单词首字母大写. 例如: xxxYyyZzz
+		包名: 全小写. 例如: xxx.yyy.zzz
+	2.代码折行
+		如果一行代码很长, 可以折行, 折行的时候, 要将运算符写在下一行的开头, 并且按等级对其.
+		
+五.MyEclipse
+	1.介绍
+		Eclipse是IBM公司开发的一款开源的IDE.
+		MyEclipse是Eclipse的一个插件, 收费的.
+	2.安装
+		使用 MyEclipse_6.6.0_E3.3.2_Installer.exe 安装
+		第一次启动时会提示选择工作空间, 确定以后工作的目录
+		会在选中的目录生成 .metadata 文件夹, 其中保存配置文件
+	3.注册
+		MyEclipse - subscription - 输入注册码
+		运行 MyEclipseKeyGen.jar
+		填入名字 - generate
+	4.界面
+		关闭所有界面
+		在 window - show view 中选择 package explorer 和 console
+	5.创建工程
+		File - new - java project	会在工作空间生成一个文件夹, 其中src保存源代码, bin保存class文件
+		点击src - new - package - 输入包名
+		点击包 - new - class - 输入类名 - 选择生成main方法 - finish
+		写代码 - 右键 - run as - java application
+	6.功能使用
+		* 快速修正: ctrl + 1
+		整理包: ctrl + shift + o	导入没导的包, 清除导了没用的包
+		复制: ctrl + alt + down
+		删除: ctrl + d
+		移动代码: alt + up, alt + down
+		插入空行: shift + enter, ctrl + shift + enter
+		单行注释: ctrl + /
+		多行注释: ctrl + shift + /, ctrl + shift + \
+		* 格式化代码: ctrl + shift + f
+		
+		最大化窗口: ctrl + m
+		打印语句: 输入syso - alt+/
+		
+		生成get,set方法: 右键 - source - generate getters and setters 
+		使用属性生成构造函数: 右键 - source - generate constructor using fields
+		生成无参构造函数: 右键 - source - generate constructor from superclass
+		
+		抽取方法: 选中代码 - 右键 - refactor - extract method - 输入方法名 - ok		快捷键: alt + shift + m
+		* 改名: alt + shift + r
+		
+		* 导入工程: package explorer中右键 - import - general - existing project - 选择工程文件夹
+		
+		
+	7.配置快捷键
+		window - preferences - general - keys
+		* 内容提示: content assist - 去掉原有绑定 - 改为 alt+/ - apply
+		运行程序: run java application - alt + r
+			
+		
+	8.配置
+		格式化样式
+			window - preferences - java - code style - formatter - new - 输入配置名称 - Line warpping - max line width - 9999
+			comments - 去掉所有勾
+		显示行号
+			右键点击行首 - show line number
+		
+报错提示:
+
+	PersonTest.java:4: cn.itcast.day9.Person is not public in cn.itcast.day9; cannot be accessed from outside package
+			import cn.itcast.day9.Person;
+	4行: Person不是公有的, 不能在包外访问
+	
+	
+思考题:
+
+现在小明一家过一座桥，过桥时候是黑夜，所以必须有灯。
+现在小明过桥要１秒，小明的弟弟要３秒，小明的爸爸要６秒，小明的妈妈要８秒，小明的爷爷要１２秒。
+每次此桥最多可过两人，而过桥的速度依过桥最慢者而定，而且灯在点燃后３０秒就会熄灭。问小明一家如何过桥?

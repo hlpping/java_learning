@@ -1,0 +1,3 @@
+reflectExample.Product
+reflectExample.Store
+reflectExample.Customer

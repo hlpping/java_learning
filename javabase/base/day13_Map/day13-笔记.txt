@@ -1,0 +1,41 @@
+一.Map
+	1.HashMap
+		在HashMap存储对象的时候, 会先将key对象计算哈希值, 然后在集合中查找是否有哈希值相同的key对象.
+			如果没有哈希值相同的key对象, 直接将这个key和value存入集合.
+			如果有哈希值相同的key对象, 那么会将这个要存入的key对象和哈希值相同的key对象equals()比较.
+				如果比较结果不同, 将key和value存入.
+				如果比较结果相同, 则覆盖原有记录.
+	2.遍历Map集合
+		a).通过keySet()方法
+			使用Map的keySet()方法, 获取Map中所有key对象组成的一个Set集合.
+			遍历这个Set可以获得Map中的每一个key对象.
+			再使用Map的get()方法通过每一个key对象获取到每一个value对象.	
+		b).通过entrySet()方法
+			使用Map的entrySet()方法, 获取Map中所有entry(记录,键值对)组成的一个Set集合.
+			遍历这个Set可以获得Map中的每一个entry(记录,键值对).
+			再使用Entry的getKey()和getValue()方法获取每一条记录的key和value.
+	3.TreeMap
+		在TreeMap存储键值对的时候, 会以二叉树形式存储, 每存一个键值对时, 会将key对象使用指定的比较算法进行比较, 确定其位置.
+		比较算法传入的方式有两种, 自然顺序, 比较器顺序, 如果都传, 优先比较器.
+		TreeMap和HashMap相比优势在于可以排序, 但效率略低.
+	4.Hashtable
+		原理和HashMap相同, 但线程安全, 效率略低. Hashtable不允许null键和null值.
+	5.Properties
+		Hashtable的子类, 一般用来操作.properties配置文件. key和value都用来存储Stirng类型
+	6.LinkedHashMap
+		HashMap的子类, 有存储顺序的HashMap. 
+		
+二.工具类
+	1.可变参数
+		在JDK5之后, 定义方法的形参时可以使用可变参数, 可变参数可以接收同一类型的0到多个实参, 或者接收一个数组. 
+		在方法中这个实参就是一个数组, 遍历数组中的元素就可以获取每一个实参.
+		可变参数的语法: 返回值类型 方法名(类型... 形参名)
+		可变参数只能放在参数列表的最后一个
+		
+三.包装类
+	1.包装类名
+		除了int和char, 都是基本数据类型名首字母大写. int是Integer, char是Character
+		
+
+中午练习
+	测试Arrays类和Collections类中的方法. 数组的工具类和集合的工具类.

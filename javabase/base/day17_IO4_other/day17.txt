@@ -1,0 +1,89 @@
+一.序列流
+	1.SequenceInputStream
+		可以将多个输入流整合成一个
+	2.整合两个输入流
+		SequenceInputStream(InputStream s1, InputStream s2) 
+	3.整合多个输入流
+		SequenceInputStream(Enumeration<? extends InputStream> e) 
+	4.API
+		使用SequenceInputStream的read()方法, 可以从其内部封装的第一个流开始读, 读到第一个流的末尾会将其关闭, 再从下一个开始读.
+		直到读到最后一个流的末尾, 返回-1
+		
+二.打印流
+	1.两种打印流
+		PrintWriter
+		PrintStream
+		两个流都有print()和println()方法
+		原理相同, 都是将实参对象的toString()返回值打印, println()可以多输出一个\r\n
+	2.自动刷出
+		使用构造函数 
+		PrintWriter(OutputStream out, boolean autoFlush) 
+		PrintStream(OutputStream out, boolean autoFlush)
+		这两个构造函数的第二个参数如果传入true, 可以提供自动刷出的功能, 每调用print()或println()一次, 其自动调用flush()一次
+	3.指定编码
+		使用构造函数
+		PrintStream(OutputStream out, boolean autoFlush, String encoding) 
+		使用这个构造函数创建的打印流可以指定编码输出, 并且自动刷出.
+		
+三.对象操作流
+	1.ObjectInputStream, ObjectOutputStream
+		ObjectInputStream可以读取ObjectOutputStream流写出的对象, 读取对象使用readObject()方法.
+		ObjectOutputStream可以写出一个对象, 以供ObjectInputStream读取, 写出对象使用writeObject()方法.
+	2.读取到流末尾
+		如果使用ObjectInputStream读取对象, 调用readObject()方法时, 遇到流末尾, 会抛出EOFException
+		为了避免这种情况, 我们如果要在一个文件中存储多个对象, 那么可以将这多个对象装入一个集合, 将集合对象写入流.
+	3.注意
+		如果要将一个对象使用ObjectOutputStream写出, 那么必须实现Serializable接口.
+		Serializable接口没有任何抽象方法, 只是用来标记可以被序列化的类.
+		
+四.基本数据类型操作流
+	1.DataInputStream
+		可以读取指定类型的数据
+		例如: readInt()是读取4个字节转为int, readChar()是读取2个字节转为char
+	2.DataOutputStream
+		可以按照类型占用字节大小写出
+		例如: writeInt()会写出4个字节, 如果实参只占1个字节, 前3个字节会用0填充
+		
+五.内存操作流
+	1.ByteArrayInputStream
+		可以从字节数组(内存)中读取数据, 逐个读取, 直到数组末尾, 返回-1
+	2.ByteArrayOutputStream
+		可以写出数据到内存中, 可以通过toByteArray()方法将所有写出的数据从内存中获取, 返回一个字节数组. 通常会用该类来缓冲数据.
+	3.CharArrayReader, CharArrayWriter
+		和ByteArrayInputStream, ByteArrayOutputStream原理相同, 只不过是操作字符.
+		
+六.管道流
+	1.PipedInputStream
+		和管道输出流连接之后, 可以读取输出流中的数据
+	2.PipedOutputStream
+		和管道输入流连接之后, 可以向输入流中输出数据
+	3.连接
+		使用PipedInputStream或者PipedOutputStream的connect()方法进行连接
+		
+七.随机读写文件
+	1.RandomAccessFile
+		可以对一个文件同时读写. 构造函数中传入第二个参数"rw"即为读写.
+	2.API
+		seek() 将指针指向某个位置, 下次读或写从这个位置开始
+		读取可以调用read(), readInt(), readChar(), readLine()等若干方法
+		写出可以调用write(), writeInt(), writeChar(), writeBytes()等若干方法
+		
+八.IO重点总结
+	1.字节流
+		使用3种方式拷贝文件
+			FileInputStream和FileOutputStream, 逐个字节
+			FileInputStream和FileOutputStream, 整个数组
+			BufferedInputStream和BufferedOutputStream, 包装之后使用内部缓冲区
+	2.字符流
+		使用4中方式拷贝文件
+			FileReader和FileWriter, 逐个字符
+			FileReader和FileWriter, 拷贝数组
+			BufferedReader和BufferedWriter, 包装之后使用内部缓冲区, 逐个字符
+			BufferedReader和BufferedWriter, 包装之后使用内部缓冲区, 逐行拷贝
+	3.了解包装设计模式
+		含有被包装类对象的引用
+		通过构造函数传入
+		提供和被包装类相同方法, 其中调用被包装类方法, 对其进行增强
+		继承或实现和被包装类相同的父类或接口, 包装类可以当做被包装类来使用
+	4.文件对象
+		熟练掌握拷贝文件夹			

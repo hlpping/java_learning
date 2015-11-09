@@ -1,0 +1,60 @@
+一.接口
+	1.接口的定义方式
+		使用interface关键字定义
+		其中所有方法都是抽象的
+		所有方法默认被abstract public 修饰
+	2.接口的使用
+		使用implements实现一个接口
+		实现一个接口需要将所有的方法都重写, 或者将当前类声明为抽象
+	3.接口继承接口
+		接口可以使用extends关键字继承另一个接口, 如果父级接口不冲突, 一个接口可以继承多个接口
+	4.接口和抽象类的区别
+		抽象类中可以有不抽象的方法, 接口中所有方法都是抽象的
+		抽象类使用abstract class定义, 接口用interface定义
+		抽象类中的方法修饰符没有特殊之处, 接口中的方法默认被abstract public修饰, 接口中的变量默认被public static final修饰
+		抽象类的子类使用extends继承, 接口的子类使用implements实现
+		一个类只能继承一个抽象类, 一个类可以实现多个接口
+		如果我们要定义一个类时, 其中所有方法都是抽象的, 那么就声明为接口, 如果其中需要有不抽象的方法, 那么就声明为抽象类
+		
+二.异常
+	1.什么是异常
+		Java程序在运行的过程中遇到的错误
+	2.异常的分类
+		所有错误和异常都是Throwable的子类
+		a).Error: 严重的错误, 一般由虚拟机直接抛出, 程序无法对其进行处理.
+		* b).Exception: 所有异常的父类
+		* c).RuntimeException: 运行时异常
+	* 3.运行时异常和编译时异常
+		运行时异常一般都是一些经常出现的错误, 程序中不对其进行处理, 编译不报错. RuntimeException的子类
+		编译时异常, Exception中除了RuntimeException的部分都是编译时异常, 如果有可能抛出这些异常, 那么在代码中需要进行处理. 否则编译报错.
+	* 4.处理异常
+		a).声明抛出, 如果在程序中有可能出现编译时异常, 可以在方法签名最后使用 throws 异常名 的形式声明这个方法有可能抛出异常.
+		b).捕获异常, 使用try...catch语法, 监视某段代码, 如果抛出了catch中指定的异常, 就运行对应的catch代码
+	5.try...finally
+		try语法除了配合catch使用, 还可以配合finally使用, 进入try代码之后, 无论是否抛出异常, 方法是否结束, 都会运行finally中的代码.
+	* 6.子类抛出异常
+		如果子类继承父类重写方法, 那么子类抛出的异常只能是父类异常的一个子集.
+		子类不能比父类抛出更多的异常, 子类不能比父类的功能弱.
+	7.处理多个异常
+		a).在throws后面以逗号分隔, 声明抛出多个
+		b).在try语句后, 跟多个catch, 或者捕获这些异常的父类
+	8.异常总结
+		如果程序中运行一段代码, 有可能出现异常, 那么有两种处理方式, 要么捕获, 要么抛出.
+		如果我们需要对异常进行处理, 那么就catch, 不处理就抛出.
+		
+报错提示:
+	Exception in thread "main" java.lang.ArithmeticException: / by zero
+        at ExceptionDemo.div(ExceptionDemo.java:8)
+        at ExceptionDemo.main(ExceptionDemo.java:4)
+	8行: 数学异常, 除数为0.        
+	
+	
+	ExceptionDemo.java:15: unreported exception java.io.FileNotFoundException; must be caught or declared to be thrown
+                FileReader reader = new FileReader("D:/Test7.java");
+	15行: 未报告的异常, 文件找不到异常, 必须捕获或者声明抛出
+	
+	
+	ExceptionDemo1.java:39: run() in Student cannot override run() in Person; overridden method does not throw java.io.FileNotFoundException
+        public void run() throws ClassNotFoundException, FileNotFoundException {
+	39行: 在Student中的run()不能覆盖Person中的run(), 不能抛出FileNotFoundException
+        
