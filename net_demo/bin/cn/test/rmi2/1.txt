@@ -1,0 +1,142 @@
+J2EE：用RMI和CORBA进行分布式Java编程
+
+	Java远程方法调用（RMI）机制和公用对象请求代理体系（CORBA）是最重要 和使用最广泛的两种分布式对象系统。每个系统都有其特点和短处。它们在行 业中被用于从电子交易到保健医疗的各个领域。一个项目如果要从这两种分布式 机制中选用一个，往往难以抉择。本文概括地介绍了RMI和CORBA，更重要的是， 它将介绍如何开发一个有用的应用程序，用于从远程主机下载文件。然后它将：
+　　
+简要介绍分布式对象系统
+　　简要介绍RMI和CORBA
+　　让你对在RMI和CORBA中开发应用程序所涉及的工作有个初步印象
+　　演示如何使用RMI和CORBA，从远程主机传送文件
+　　对RMI和CORBA进行简单比较
+　　客户机/服务器模型
+　　客户机/服务器模型是分布式计算的一种形式，在这种形式中，一个程序（客 户机）与另一个程序（服务器）通讯以便交换信息。在这种模型中，客户机和服 务器通常都说同样的语言－－也就是说客户机和服务器能理解同一个协议－－这 样它们才能通讯。
+　　虽然客户机/服务器模型的实现方式多种多样，但典型做法是使用底层套接字。 使用套接字开发客户机/服务器系统意味着，我们必须设计一个协议，也就是客户 机和服务器都认识的一组命令集，通过这些命令它们就能通讯了。举例来说， HTTP协议中提供了一个名为GET的方法，所有Web服务器都必须实现这个方法，所 有Web客户机（浏览器）都必须使用这个方法，才能获取文档。
+　　分布式对象模型
+　　基于分布式对象的系统是一组对象的集合，这些对象以一种明确定义封装的接 口把服务的请求者（客户机）和服务的提供者（服务器）分隔开。换言之，客户 机从服务的实现中分离出来，变成数据的呈现和可执行代码。这就是基于分布式 对象的模型与纯粹的客户机/服务器模型的主要区别之一。
+　　在基于分布式对象的模型中，客户机向对象发送消息，然后对象解释该消息以 便决定要执行什么服务。这项服务，也就是方法，可以选择是让对象还是让代理 来执行。Java远程方法调用（RMI）和公用对象请求代理体系（CORBA）就是这种 模型的例子。
+　　
+RMI
+　　RMI是一个分布式对象系统，它使你能够轻松地开发出分布式Java应用程序。 在RMI中开发分布式应用程序比用套接字开发要简单，因为不需要做设计协议这种 很容易出错的工作。在RMI中，开发者会有一种错觉，似乎是从本地类文件调用的 本地方法，其实参数传送给了远程目标，目标解释参数后再把结果发回给调用方。
+　　RMI应用程序初步
+　　使用RMI开发分布式应用程序包括以下步骤：
+　　定义一个远程接口
+　　实现这个远程接口
+　　开发服务器
+　　开发客户机
+　　生成存根和基干，启动RMI注册表、服务器和客户机
+　　下面我们将通过开发一个文件传输程序来实践这些步骤。
+　　范例： 文件传输程序
+　　这个应用程序允许客户机从远程主机上传送（即下载）任何类型的文件（纯 文本或二进制文件）。第一步是定义一个远程接口，这个接口规定了服务器所提 供方法的信号，客户机将调用这些方法。
+　　定义一个远程接口
+　　用于文件下载应用程序的远程接口如代码范例1所示。接口 FileInterface提供了一个方法downloadFile，这个 方法接受String参数（文件名），将文件的数据以字节数组的形式 返回。
+　　代码范例1 1: FileInterface.java
+　　import java.rmi.Remote;
+　　import java.rmi.RemoteException;
+　　public interface FileInterface extends Remote {
+　　public byte[] downloadFile(String fileName) throws
+　　RemoteException;
+　　}
+　　请注意FileInterface的以下特征:
+　　它必须声明为public，这样客户机才能加载实现远程接口 的远程对象。
+　　它必须扩展为Remote接口，以满足使该对象成为远程对象的 要求。
+　　这个接口中的每种方法都必须投出一个java.rmi.RemoteException。
+
+	实现远程接口
+　　下一步是实现接口FileInterface。实现的范例见代码范例2。 请注意，除了实现FileInterface之外，还把FileImpl 类扩展为UnicastRemoteObject。这表示FileImpl类 将用于创建一个单独的、不可复制的远程对象，它使用RMI缺省的基于TCP的传送 通道进行通讯。
+　　代码范例2: FileImpl.java
+　　import java.io.*;
+　　import java.rmi.*;
+　　import java.rmi.server.UnicastRemoteObject;
+　　public class FileImpl extends UnicastRemoteObject
+　　implements FileInterface {
+　　private String name;
+　　public FileImpl(String s) throws RemoteException{
+　　super();
+　　name = s;
+　　}
+　　public byte[] downloadFile(String fileName){
+　　try {
+　　File file = new File(fileName);
+　　byte buffer[] = new byte[(int)file.length()];
+　　BufferedInputStream input = new
+　　BufferedInputStream(new FileInputStream(fileName));
+　　input.read(buffer,0,buffer.length);
+　　input.close();
+　　return(buffer);
+　　} catch(Exception e){
+　　System.out.println("FileImpl: "+e.getMessage());
+　　e.printStackTrace();
+　　return(null);
+　　}
+　　}
+　　}
+　　开发服务器
+　　第三个步骤是开发服务器。服务器需要做三件事：
+　　创建RMISecurityManager的一个实例并安装它
+　　创建远程对象（在本例中是FileImpl）的一个实例
+　　在RMI注册表中登记这个创建的对象。实现的范例见代码范例3。
+　　代码范例 3: FileServer.java
+　　import java.io.*;
+　　import java.rmi.*;
+　　public class FileServer {
+　　public static void main(String argv[]) {
+　　if(System.getSecurityManager() == null) {
+　　System.setSecurityManager(new RMISecurityManager());
+　　}
+　　try {
+　　FileInterface fi = new FileImpl("FileServer");
+　　Naming.rebind("//127.0.0.1/FileServer", fi);
+　　} catch(Exception e) {
+　　System.out.println("FileServer: "+e.getMessage());
+　　e.printStackTrace();
+　　}
+　　}
+　　}
+　　语句Naming.rebind("//127.0.0.1/FileServer", fi)假定RMI 注册表在缺省的端口号1099上运行。但是，如果RMI注册表在其他端口号上运行， 就必须在这一句中指定端口号。例如，如果RMI注册表在端口4500上运行，那么 这一句就变成：
+　　Naming.rebind("//127.0.0.1:4500/FileServer", fi)
+　　另外，在这里要着重指出，我们假定rmi注册表和服务器是在同一台电脑上运 行。如果不是这样，只需修改rebind方法中的地址即可。
+　　开发客户机
+　　下一步是开发客户机。客户机可以远程调用远程接口 （FileInterface）中指定的任何方法。但是为了能这么做，客户 机首先必须从RMI注册表中获得指向该远程对象的引用。获得引用之后就可以调 用downloadFile方法了。客户机的实现请见代码范例4。在这个实 现中，客户机从命令行接收两个参数：
+　　第一个参数是要下载文件的名称，第二个参数是要下载的文件所在主机的地 址，也就是运行文件服务器的那台电脑的地址。
+　　代码范例4: FileClient.java
+　　import java.io.*;
+　　import java.rmi.*;
+　　public class FileClient{
+　　public static void main(String argv[]) {
+　　if(argv.length != 2) {
+　　System.out.println("Usage: java FileClient fileName machineName");
+　　System.exit(0);
+　　}
+　　try {
+　　String name = "//" + argv[1] + "/FileServer";
+　　FileInterface fi = (FileInterface) Naming.lookup(name);
+　　byte[] filedata = fi.downloadFile(argv[0]);
+　　File file = new File(argv[0]);
+　　BufferedOutputStream output = new
+　　BufferedOutputStream(new FileOutputStream(file.getName()));
+　　output.write(filedata,0,filedata.length);
+　　output.flush();
+　　output.close();
+　　} catch(Exception e) {
+　　System.err.println("FileServer exception: "+ e.getMessage());
+　　e.printStackTrace();
+　　}
+　　}
+　　}
+　　运行应用程序
+　　为了运行应用程序，我们需要生成存根和基干，编译服务器和客户机，启动 RMI注册表，最后是启动服务器和客户机。
+　　为了生成存根和基干，请使用rmic编译器：
+　　prompt> rmic FileImpl
+　　这将生成两个文件：FileImpl_Stub.class和 FileImpl_Skel.class。存根是一个客户机代理，基干是一个服 务器基干。
+　　下一步是编译服务器和客户机。用javac编译器来做这件事。但是请注意：如 果服务器和客户机是在两台不同的机器上开发的，为了编译客户机，需要把接口 （FileInterface）复制一份。
+　　最后，启动RMI注册表并运行服务器和客户机。为了在缺省的端口号上启动 RMI注册表，请在Windows中使用命令rmiregistry或 start rmiregistry。为了在其他端口号上启动RMI注册表，可以 提供该端口号作为RMI注册表的一个参数：
+　　prompt> rmiregistry portNumber
+　　运行RMI注册表之后，就可以启动服务器FileServer了。但是， 因为在服务器应用程序中正在使用RMI安全管理员，所以需要一个安全方针来与之 相配。下面是一个安全方针范例：
+　　grant {
+　　permission java.security.AllPermission "", "";
+　　};
+　　注意: 这只是一个方针的例子。它允许任何人做任何事情。对于关键 性事务应用程序，你需要指定更严格的安全方针。
+　　现在，为了启动服务器，需要把除了客户机类 （FileClient.class）之外的所有类（包括存根和基干）复制一 份。请使用以下命令启动服务器，假定安全方针位于文件policy.txt中：
+　　prompt> java -Djava.security.policy=policy.txt FileServer
+　　为了在另一台机器上启动客户机，需要复制远程接口 （FileInterface.class）和存根 （FileImpl_Stub.class）。请使用以下命令启动客户机：
+　　prompt> java FileClient fileName machineName
+　　其中fileNamefileName是要下载的文件，machineName 是该文件所在的机器（运行文件服务器的那台机器）。如果一切顺利，那么客户 机就存在了，下载完的文件保存在本地的机器上

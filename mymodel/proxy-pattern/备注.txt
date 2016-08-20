@@ -1,0 +1,8 @@
+ app 静态代理
+ http://www.cnblogs.com/jqyp/archive/2010/08/20/1805041.html
+ http://developer.51cto.com/art/200907/134904.htm
+ 
+ JDKproxy动态代理
+ http://www.cnblogs.com/jqyp/archive/2010/08/20/1805041.html
+ 
+ CglibProxy

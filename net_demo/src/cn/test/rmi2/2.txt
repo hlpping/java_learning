@@ -1,0 +1,162 @@
+JAVA提高阶段：RMI一步一步来
+
+RMI，远程方法调用（Remote Method Invocation）是Enterprise JavaBeans的支柱，是建立分布式Java应用程序的方便途径。RMI是非常容易使用的，但是它非常的强大。
+　　RMI的基础是接口，RMI构架基于一个重要的原理：定义接口和定义接口的具体实现是分开的。下面我们通过具体的例子，建立一个简单的远程计算服务和使用它的客户程序
+　　一个正常工作的RMI系统由下面几个部分组成：
+　　远程服务的接口定义
+　　远程服务接口的具体实现
+　　桩（Stub）和框架（Skeleton）文件
+　　一个运行远程服务的服务器
+　　一个RMI命名服务，它允许客户端去发现这个远程服务
+　　类文件的提供者（一个HTTP或者FTP服务器）
+　　一个需要这个远程服务的客户端程序
+　　下面我们一步一步建立一个简单的RMI系统。首先在你的机器里建立一个新的文件夹，以便放置我们创建的文件，为了简单起见，我们只使用一个文件夹存放客户端和服务端代码，并且在同一个目录下运行服务端和客户端。
+　　如果所有的RMI文件都已经设计好了，那么你需要下面的几个步骤去生成你的系统：
+　　1、 编写并且编译接口的Java代码
+　　2、 编写并且编译接口实现的Java代码
+　　3、 从接口实现类中生成桩（Stub）和框架（Skeleton）类文件
+　　4、 编写远程服务的主运行程序
+　　5、 编写RMI的客户端程序
+　　6、 安装并且运行RMI系统
+　　1、 接口
+　　第一步就是建立和编译服务接口的Java代码。这个接口定义了所有的提供远程服务的功能，下面是源程序：
+　　//Calculator.java
+　　//define the interface
+　　import java.rmi.Remote;
+　　public interface Calculator extends Remote
+　　{
+　　 public long add(long a, long b)
+　　 throws java.rmi.RemoteException;
+　　 public long sub(long a, long b)
+　　 throws java.rmi.RemoteException;
+　　 public long mul(long a, long b)
+　　 throws java.rmi.RemoteException;
+　　 public long div(long a, long b)
+　　 throws java.rmi.RemoteException;
+　　}
+　　注意，这个接口继承自Remote，每一个定义的方法都必须抛出一个RemoteException异常对象。
+　　建立这个文件，把它存放在刚才的目录下，并且编译。
+　　>javac Calculator.java
+　　2、 接口的具体实现
+　　下一步，我们就要写远程服务的具体实现，这是一个CalculatorImpl类文件：
+　　//CalculatorImpl.java
+　　//Implementation
+　　import java.rmi.server.UnicastRemoteObject
+　　public class CalculatorImpl extends UnicastRemoteObject implements Calculator
+　　{
+　　 // 这个实现必须有一个显式的构造函数，并且要抛出一个RemoteException异常
+　　 public CalculatorImpl()
+　　 throws java.rmi.RemoteException {
+　　 super();
+　　 }
+　　 public long add(long a, long b)
+　　 throws java.rmi.RemoteException {
+　　 return a + b;
+　　 }
+　　 public long sub(long a, long b)
+　　 throws java.rmi.RemoteException {
+　　 return a - b;
+　　 }
+　　 public long mul(long a, long b)
+　　 throws java.rmi.RemoteException {
+　　 return a * b;
+　　 }
+　　 public long div(long a, long b)
+　　 throws java.rmi.RemoteException {
+　　 return a / b;
+　　 }
+　　}
+　　同样的，把这个文件保存在你的目录里然后编译他。
+　　这个实现类使用了UnicastRemoteObject去联接RMI系统。在我们的例子中，我们是直接的从UnicastRemoteObject这个类上继承的，事实上并不一定要这样做，如果一个类不是从UnicastRmeoteObject上继承，那必须使用它的exportObject()方法去联接到RMI。
+　　如果一个类继承自UnicastRemoteObject，那么它必须提供一个构造函数并且声明抛出一个RemoteException对象。当这个构造函数调用了super()，它久激活UnicastRemoteObject中的代码完成RMI的连接和远程对象的初始化。
+　　3、 桩（Stubs）和框架（Skeletons）
+　　下一步就是要使用RMI编译器rmic来生成桩和框架文件，这个编译运行在远程服务实现类文件上。
+　　>rmic CalculatorImpl
+　　在你的目录下运行上面的命令，成功执行完上面的命令你可以发现一个Calculator_stub.class文件，如果你是使用的Java2SDK，那么你还可以发现Calculator_Skel.class文件。
+　4、 主机服务器
+　　远程RMI服务必须是在一个服务器中运行的。CalculatorServer类是一个非常简单的服务器。
+　　//CalculatorServer.java
+　　import java.rmi.Naming;
+　　public class CalculatorServer {
+　　 public CalculatorServer() {
+　　 try {
+　　 Calculator c = new CalculatorImpl();
+　　 Naming.rebind("rmi://localhost:1099/CalculatorService", c);
+　　 } catch (Exception e) {
+　　 System.out.println("Trouble: " + e);
+　　 }
+　　 }
+　　 public static void main(String args[]) {
+　　 new CalculatorServer();
+　　 }
+　　}
+　　建立这个服务器程序，然后保存到你的目录下，并且编译它。
+　　5、 客户端
+　　客户端源代码如下：
+　　//CalculatorClient.java
+　　import java.rmi.Naming;
+　　import java.rmi.RemoteException;
+　　import java.net.MalformedURLException; 
+	import java.rmi.NotBoundException;
+　　public class CalculatorClient {
+　　 public static void main(String[] args) {
+　　 try {
+　　 Calculator c = (Calculator)
+　　 Naming.lookup(
+　　 "rmi://localhost
+　　 /CalculatorService");
+　　 System.out.println( c.sub(4, 3) );
+　　 System.out.println( c.add(4, 5) );
+　　 System.out.println( c.mul(3, 6) );
+　　 System.out.println( c.div(9, 3) );
+　　 }
+　　 catch (MalformedURLException murle) {
+　　 System.out.println();
+　　 System.out.println(
+　　 "MalformedURLException");
+　　 System.out.println(murle);
+　　 }
+　　 catch (RemoteException re) {
+　　 System.out.println();
+　　 System.out.println(
+　　 "RemoteException");
+　　 System.out.println(re);
+　　 }
+　　 catch (NotBoundException nbe) {
+　　 System.out.println();
+　　 System.out.println(
+　　 "NotBoundException");
+　　 System.out.println(nbe);
+　　 }
+　　 catch (
+　　 java.lang.ArithmeticException
+　　 ae) {
+　　 System.out.println();
+　　 System.out.println(
+　　 "java.lang.ArithmeticException");
+　　 System.out.println(ae);
+　　 }
+　　 }
+　　}
+　　保存这个客户端程序到你的目录下（注意这个目录是一开始建立那个，所有的我们的文件都在那个目录下），并且编译他。
+　　6、 运行RMI系统
+　　现在我们建立了所有运行这个简单RMI系统所需的文件，现在我们终于可以运行这个RMI系统啦！来享受吧。
+　　我们是在命令控制台下运行这个系统的，你必须开启三个控制台窗口，一个运行服务器，一个运行客户端，还有一个运行RMIRegistry。
+　　首先运行注册程序RMIRegistry，你必须在包含你刚写的类的那么目录下运行这个注册程序。
+　　>rmiregistry
+　　好，这个命令成功的话，注册程序已经开始运行了，不要管他，现在切换到另外一个控制台，在第二个控制台里，我们运行服务器CalculatorService，因为RMI的安全机制将在服务端发生作用,所以你必须增加一条安全策略。以下是对应安全策略的例子
+　　grant {
+　　permission java.security.AllPermission "", "";
+　　};
+　　注意:这是一条最简单的安全策略,它允许任何人做任何事,对于你的更加关键性的应用,你必须指定更加详细安全策略。
+　　现在为了运行服务端，你需要除客户类(CalculatorClient.class)之外的所有的类文件。确认安全策略在policy.txt文件之后,使用如下命令来运行服务器。
+　　> java -Djava.security.policy=policy.txt CalculatorServer
+　　这个服务器就开始工作了，把接口的实现加载到内存等待客户端的联接。好现在切换到第三个控制台，启动我们的客户端。
+　　为了在其他的机器运行客户端程序你需要一个远程接口(Calculator.class) 和一个stub(CalculatorImpl_Stub.class)。 使用如下命令运行客户端
+　　 prompt> java -Djava.security.policy=policy.txt CalculatorClient
+　　如果所有的这些都成功运行，你应该看到下面的输出：
+　　1
+　　9
+　　18
+　　3
+　　如果你看到了上面的输出，恭喜你，你成功了，你已经成功的创建了一个RMI系统，并且使他正确工作了。即使你运行在同一个计算机上，RMI还是使用了你的网络堆栈和TCP/IP去进行通讯，并且是运行在三个不同的Java虚拟机上。这已经是一个完整的RMI系统。 

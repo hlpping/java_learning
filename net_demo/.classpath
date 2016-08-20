@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="lib/junit-4.4.jar"/>
+	<classpathentry kind="lib" path="lib/jar_poi/commons-logging-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/jar_poi/jstl.jar"/>
+	<classpathentry kind="lib" path="lib/jar_poi/poi-3.7-20101029.jar"/>
+	<classpathentry kind="lib" path="lib/jar_poi/standard.jar"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.5-bin.jar"/>
+	<classpathentry kind="lib" path="lib/jar_mail/activation.jar"/>
+	<classpathentry kind="lib" path="lib/jar_mail/mail.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

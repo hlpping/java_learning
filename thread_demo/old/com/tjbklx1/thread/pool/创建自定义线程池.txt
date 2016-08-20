@@ -1,0 +1,35 @@
+创建自定义线程池的构造方法很多，本例中参数的含义如下：
+
+
+   　ThreadPoolExecutor
+　　public ThreadPoolExecutor(int corePoolSize,
+						　　int maximumPoolSize,
+						　　long keepAliveTime,
+						　　TimeUnit unit,
+						　　BlockingQueue workQueue)
+
+
+　　用给定的初始参数和默认的线程工厂及处理程序创建新的 ThreadPoolExecutor。使用 Executors 工厂方法之一比使用此通用构造方法方便得多。
+
+　　参数：
+
+　　corePoolSize - 池中所保存的线程数，包括空闲线程。
+
+　　maximumPoolSize - 池中允许的最大线程数。
+
+　　keepAliveTime - 当线程数大于核心时，此为终止前多余的空闲线程等待新任务的最长时间。
+
+　　unit - keepAliveTime 参数的时间单位。
+
+　　workQueue - 执行前用于保持任务的队列。此队列仅保持由 execute 方法提交的 Runnable 任务。
+
+　　抛出：
+
+　　IllegalArgumentException - 如果 corePoolSize 或 keepAliveTime 小于零，或者 maximumPoolSize 小于或等于零，或者 corePoolSize 大于 maximumPoolSize。
+
+　　NullPointerException - 如果 workQueue 为 null
+
+　　自定义连接池稍微麻烦些，不过通过创建的ThreadPoolExecutor线程池对象，可以获取到当前线程池的尺寸、正在执行任务的线程数、工作队列等等。
+
+　　有关Java5线程池的内容到此就没有了，更多的内容还需要研读API来获取。
+

@@ -1,0 +1,1892 @@
+PL/Sql循序渐进全面学习教程
+
+课程一 
+PL/SQL基本查询与排序
+
+本课重点： 
+1、写SELECT语句进行数据库查询 
+2、进行数学运算 
+3、处理空值 
+4、使用别名 ALIASES 
+5、连接列 
+6、在 SQL PLUS中编辑缓冲，修改 SQL SCRIPTS 
+7、ORDER BY进行排序输出。 
+8、使用 WHERE字段。
+
+一、写 SQL命令：
+不区分大小写。 
+SQL语句用数字分行，在 SQL PLUS中被称为缓冲区。
+最后以；或 /结束语句。
+也可以用RUN来执行语句
+
+
+二、例 
+SELECT dept_id, last_name, manager_id 
+FROM s_emp; 
+
+SELECT last_name, salary * 12, commission_pct 
+FROM s_emp;
+
+对于数值或日期型的字段，可以进行相应的四则运算，优先级与标准的高级语言相同。 
+SELECT last_name, salary, 12 * (salary + 100) 
+FROM s_emp;
+
+三、列的别名 ALIASES：
+计算的时候特别有用；
+紧跟着列名，或在列名与别名之间加 “AS”；
+如果别名中含有SPACE，特殊字符，或大小写，要用双引号引起。
+例(因字体原因，读者请记住：引号为英文双引号 Double Quotation)： 
+
+SELECT last_name, salary, 12 * (salary + 100) ”Annual Salary” 
+FROM s_emp; 
+
+四、连接符号：||连接不同的列或连接字符串使结果成为一个有意义的短语： 
+
+SELECT first_name || ' ' || last_name || ','|| title ”Employees” 
+FROM s_emp; 
+
+五、管理 NULL值： 
+
+SELECT last_name, title, salary * NVL(commission_pct,0)/100 COMM 
+FROM s_emp; 
+此函数使 NULL转化为有意义的一个值，相当于替换 NULL。
+
+六、SQL PLUS的基本内容，请参考<SQL PLUS 简单实用精髓篇 > 
+
+七、ORDER BY操作：
+与其它SQL92标准数据库相似，排序如： 
+SELECT expr FROM table 
+[ORDER BY {column,expr} [ASC|DESC]]; 
+从Oracle7 release 7.0.16开始，ORDER BY可以用别名。
+另：通过位置判断排序： 
+
+SELECT last_name, salary*12 
+FROM s_emp 
+ORDER BY 2; 
+
+这样就避免了再写一次很长的表达式。
+另：多列排序： 
+SELECT last name, dept_id, salary 
+FROM s_emp 
+ORDER BY dept_id, salary DESC; 
+
+八、限制选取行：
+SELECT expr 
+FROM table 
+[WHERE condition(s)] 
+[ORDER BY expr];
+例  
+SELECT first_name, last_name, start_date 
+FROM s_emp 
+WHERE start_date BETWEEN '09-may-91' AND '17-jun-91';
+
+例 
+2： 
+SELECT last_name 
+FROM s_emp 
+WHERE last_name LIKE ._a%.; //显示所有第二个字母为 a的 last_name
+例 
+3：
+如果有列为 NULL 
+SELECT id, name, credit_rating 
+FROM s_customer 
+WHERE sales_rep_id IS NULL;
+
+优先级： 
+Order 	Evaluated Operator 
+1		All comparison operators (=, <>, >, >=, <, <=, IN, LIKE, IS NULL, BETWEEN) 
+2		AND 
+3		OR 
+
+总结：我们今天主要学习了如何进行查询SELECT操作，具体的组合查询与子查询将在以后的课堂中学习，同时希望大家可以工作、学习中多多摸索，实践! 
+
+课程二 
+PL/SQL PL/SQL查询行函数
+本课重点： 
+1、掌握各种在PL/SQL中可用的ROW函数 
+2、使用这些函数的基本概念 
+3、SELECT语句中使用函数
+4、使用转换函数
+注意：以下实例中标点均为英文半角
+
+一、FUNCTION的作用：
+进行数据计算，修改独立的数据，处理一组记录的输出，不同日期显示格式，进行数据类型转换函数分为：单独函数(ROW)和分组函数
+注意：可以嵌套、可以在SELECT, WHERE, 和ORDER BY中出现。
+语法：function_name (column|expression, [arg1, arg2,...]) 
+
+二、字符型函数 
+1、LOWER 转小写 
+2、UPPER 
+3、INITCAP首字母大写 
+4、CONCAT连接字符，相当于 || 
+5、SUBSTR SUBSTR(column|expression,m[,n]) 
+6、LENGTH返回字符串的长度 
+7、NVL转换空值
+其中，1、2经常用来排杂，也就是排除插入值的大小写混用的干扰，如： 
+
+SELECT first_name, last_name 
+FROM s_emp 
+WHERE UPPER(last_name) = .PATEL.; 
+
+三、数学运算函数 
+1、ROUND 
+四舍五入：ROUND(45.923，2) = 45.92 
+ROUND(45.923，0) = 46 
+ROUND(45.923，-1) = 50 
+2、TRUNC 截取函数 
+TRUNC(45.923，2)= 45.92 
+TRUNC(45.923)= 45 
+TRUNC(45.923，-1)= 40 
+3、MOD余除 
+MOD(1600，300) 
+实例： 
+SELECT ROUND(45.923,2), ROUND(45.923,0), 
+ROUND(45.923,-1) 
+FROM SYS.DUAL;
+四、ORACLE 日期格式和日期型函数： 
+1、默认格式为 DD-MON-YY. 
+2、SYSDATE是一个求系统时间的函数 
+3、DUAL〔'dju:el]是一个伪表，有人称之为空表，但不确切。 
+SELECT SYSDATE FROM SYS.DUAL; 
+4、日期中应用的算术运算符
+例：SELECT last_name, (SYSDATE-start_date)/7 WEEKS 
+FROM s_emp 
+WHERE dept_id = 43; 
+DATE+ NUMBER = DATE 
+DATE-DATE= NUMBER OF DAYS 
+DATE + (NUMBER/24) =加 1小时 
+5、函数： 
+MONTHS_BETWEEN(date1, date2) 月份间隔，可正，可负，也可是小数 
+ADD_MONTHS(date,n)加上 
+N个月，这是一个整数，但可以为负 
+NEXT_DAY(date,.char.) 如：NEXT_DAY (restock_date,.FRIDAY.),从此日起下个周五。 
+ROUND(date[,.fmt.]) 
+TRUNC(date[,.fmt.])
+解释下面的例子：
+SELECT id, start_date, 
+MONTHS_BETWEEN (SYSDATE,start_date) TENURE, （这句尚未明白！！） 
+ADD_MONTHS(start_date,6) REVIEW 
+FROM s_emp 
+WHERE MONTHS_BETWEEN (SYSDATE,start_date)<48; 
+我们看到： 
+MONTHS_BETWEEN (SYSDATE,start_date)<48，说明至今工作未满一年的员工。 
+LAST_DAY (restock_date) 返回本月的最后一天 
+select round(sysdate,'MONTH') from dual 
+ROUND(SYSD 
+01-11月-01 
+round(sysdate,'YEAR') = 01-1月 -02 
+ROUND 之后的值比基值大的最小符合值，大家可以用更改系统时间的方法测试，以15天为分界线，也是非常形象的四舍五入，而TRUNC恰好相反，是对现有的日期的截取。
+
+五、转换函数： 
+1、TO_CHAR使一个数字或日期转换为CHAR 
+2、TO_NUMBER把字符转换为NUMBER 
+3、TO_DATE字符转换为日期
+这几个函数较为简单，但要多多实践，多看复杂的实例。 
+
+SELECT ID,TO_CHAR(date_ordered,.MM/YY.) ORDERED 
+FROM s_ord 
+WHERE sales_rep_id = 11;
+
+转换时，要注意正确的缺省格式： 
+SELECT TO_DATE('03-MAR-92') CORRECT FROM DUAL；//正确 
+SELECT TO_DATE('031092') CORRECT FROM DUAL；//不正确 
+SELECT TO_DATE('031095','MMDDYY') ERRORR FROM DUAL 
+
+输出 
+3月 
+10日 
+SELECT TO_DATE('031095','DDMMYY') ERRORR FROM DUAL 
+输出 
+10月 
+3日 
+4、实例： 
+select to_char(sysdate,'fmDDSPTH "of" MONTH YYYY AM') TODAYS FROM DUAL; 
+TODAYS 
+
+SIXTEENTH of 11月 
+2001下午
+大小写没有什么影响，引号中间的是不参与运算。
+实例： 
+
+
+SELECT ROUND(SALARY*1.25) FROM ONE_TABLE；
+意义：涨25%工资后，去除小数位。在现实操作中，很有意义。 
+5、混合实例： 
+SELECT last_name, TO_CHAR(start_date, .fmDD ”of” Month YYYY.) HIREDATE 
+FROM s_emp 
+WHERE start_date LIKE .%91.; 
+LAST_NAME HIREDATE 
+
+Nagayama 17 of June 1991 
+Urguhart 18 of January 1991 
+Havel 27 of February 1991
+
+这里要注意：fmDD和fmDDSPTH之间的区别。 
+
+
+SELECT id, total, date_ordered 
+2 FROM s_ord 
+3 WHERE date_ordered =TO_DATE(.September 7, 1992.,.Month dd, YYYY.); 
+
+六、独立的函数嵌套 
+
+
+SELECT CONCAT(UPPER(last_name), SUBSTR(title,3)) ”Vice Presidents” 
+FROM s_emp 
+WHERE title LIKE .VP%.; 
+
+
+* 嵌套可以进行到任意深度，从内向外计算。
+例： 
+SELECT TO_CHAR(NEXT_DAY(ADD_MONTHS (date_ordered,6),.FRIDAY.), .fmDay, Month ddth, YYYY.) ”New 6 Month Review” 
+FROM s_ord 
+ORDER BY date_ordered; 
+
+
+SELECT last_name, NVL(TO_CHAR(manager_id),.No Manager.) 
+FROM s_emp 
+WHERE manager_id IS NULL; 
+
+对于例子，大家重要的理解，并多做测试，并注意英文版和中文版在日期上的区别。
+有些教材上的例子，不要盲目的相信其结果，实践后才有发言权，希望大家能够在学习的过程中不要忽略了用，
+多想一想为什么实例要如此设计，在何种情况下应用此实例来解决问题。这样，我们才真正掌握了知识。 
+
+课程三 从多个表中提取数据
+
+本课重点： 
+1、SELECT FROM多个表，使用等连接或非等连接 
+2、使用外连接 OUTER JOIN 
+3、使用自连接
+注意：以下实例中标点均为英文半角
+
+一、连接的概念：是指一个从多个表中的数据进行的查询。连接一般使用表的主键和外键。
+连接类型：等连接、不等连接、外连接、自连接
+
+二、Cartesian product ：指的是当JOIN条件被省略或无效时，所有表的行 (交叉)都被SELECT出来的现象。 
+Cartesian product可以产生大量的记录，除非是你有意如此，否则应该加上某种条件限制。 
+SELECT name, last_name 
+2 FROM s_dept, s_emp; 
+
+三、简单连接查询： 
+SELECT table.column, table.column... 
+FROM table1, table2 
+WHERE table1.column1 = table2.column2;
+
+SELECT s_emp.last_name, s_emp.dept_id, 
+s_dept.name 
+FROM s_emp, s_dept 
+WHERE s_emp.dept_id = s_dept.id;
+注意：表前缀的重要性： 
+SELECT s_dept.id ”Department ID”, s_region.id ”Region ID”, s_region.name ”Region Name” 
+FROM s_dept, s_region 
+WHERE s_dept.region_id = s_region.id;
+在WHERE段中，如果没有前缀，两个表中都有ID字段，就显得的模棱两可，AMBIGUOUS。
+这在实际中应该尽量避免。 
+WHERE 字段中，还可以有其它的连接条件，如在上例中，加上： 
+INITCAP(s_dept.last_name) = .Menchu.;
+
+再如：WHERE s_emp.dept_id = s_dept.id AND s_dept.region_id = s_region.id AND 
+s_emp.commission_pct > 0; 
+
+四、表别名 ALIAS： 
+1、使用别名进行多表查询。 
+2、仅在这个查询中生效，一旦用了表别名，就不能再用表的原有的名字进行连接。
+实例： 
+SELECT c.name ”Customer Name”, c.region_id ”Region ID”, r.name ”Region Name” 
+FROM s_customer c, s_region r 
+WHERE c.region_id = r.id;
+别名最多可以30个字符，但当然越少越好。最好也能容易识别。
+五、非等连接
+非等连接一般用在没有明确的等量关系的两个表；
+最简单的说：非等连接就是在连接中没有“=”出现的连接。 
+
+
+SELECT e.ename, e.job, e.sal, s.grade 
+FROM emp e, salgrade s 
+WHERE e.sal BETWEEN s.losal AND s.hisal;
+说明：Create a non-equijoin to evaluate an employee.s salary grade. The salary必须在另一个表中最高和最低之间。
+其它操作符<= >= 也可以实现，但是BETWEEN是非常简单实用的。 
+BETWEEN ....AND是指闭区间的，这点要注意，请大家测试。
+
+六、外连接
+语法结构：SELECT table.column, table.column 
+FROM table1, table2 
+WHERE table1.column = table2.column(+);
+
+实例： 
+SELECT e.last_name, e.id, c.name 
+FROM s_emp e, s_customer c 
+WHERE e.id (+) = c.sales_rep_id 
+ORDER BY e.id;
+显示.....，即使有的客户没有销售代表。
+
+* 可以理解为有+号的一边出现了NULL，也可以做为合法的条件。
+外连接的限制： 
+1、外连接符只能出现在信息缺少的那边。 
+2、在条件中，不能用IN 或者OR做连接符。
+七、自连接
+同一个表中使用连接符进行查询； 
+FROM的后面用同一个表的两个别名。
+实例： 
+SELECT worker.last_name||. works for .|| 2 manager.last_name 
+FROM s_emp worker, s_emp manager 
+WHERE worker.manager_id = manager.id;
+意味着：一个员工的经理 ID匹配了经理的员工号，但这个像绕口令的连接方式并不常用。
+以后我们会见到一种子查询： 
+select last_name from s_emp where salary=(select max(salary) from s_emp)
+也可以看作是一种变向的自连接
+
+课程四组函数
+
+本课重点： 
+1、了解可用的组函数 
+2、说明每个组函数的使用方法 
+3、使用 GROUP BY 
+4、通过HAVING来限制返回组
+注意：以下实例中标点均为英文半角
+
+一、概念：
+组函数是指按每组返回结果的函数。
+组函数可以出现在 SELECT和HAVING字段中。 
+GROUP BY把SELECT的结果集分成几个小组。 
+HAVING来限制返回组，对RESULT SET而言。
+
+二、组函数：(#号的函数不做重点) 
+1、AVG 
+2、COUNT 
+3、MAX 
+4、MIN 
+5、STDDEV # 
+6、SUM 
+7、VARIANCE #
+
+语法： 
+SELECT column, group_function 
+FROM table 
+[WHERE condition] 
+[GROUP BY group_by_expression] 
+[HAVING group_condition] 
+[ORDER BY column];
+实例 
+1：一个混合实例，说明所有问题： 
+SELECT AVG(salary), MAX(salary), MIN(salary), 
+2 SUM(salary) 
+3 FROM s_emp 
+4 WHERE UPPER(title) LIKE .SALES%.; 
+
+AVG(SALARY) MAX(SALARY) MIN(SALARY) SUM(SALARY) 
+1476 1525 1400 7380
+
+说明：很多函数，我们在讲函数的已经向大家介绍过，但在此为何叫分组函数呢，主要是因为它们可以与 GROUP BY来形成对不同组的计算，相当于在很多值中进行挑选。 
+* MIN MAX函数可以接任何数据类型。
+如果是MIN(last_name), MAX(last_name)，返回的是什么呢？
+千万记住，不是指LAST_NAME的长度，而是指在FIRST字母的前后顺序，第一个相同，然后比较第二个，如：xdopt > cssingkdkdk > adopt > acccc
+实例 
+2：
+SELECT COUNT(commission_pct) 
+FROM s_emp 
+WHERE dept_id = 31;
+
+返回所有非空行个数
+三、GROUP BY的应用：
+先看一个简单实例： 
+SELECT credit_rating, COUNT(*) ”# Cust” 
+FROM s_customer 
+GROUP BY credit_rating;
+
+注意这里别名的应用，复习一下从前的课程，加了引号后，就可以用特殊字符，但也仅有三个： 
+#$_，什么对象的名字都如此。当然空格也是可以的。
+复杂实例： 
+SELECT title, SUM(salary) PAYROLL 
+FROM s_emp 
+WHERE title NOT LIKE .VP%. 
+GROUP BY title 
+ORDER BY SUM(salary);
+这里要注意一下几个 CLAUSE的先后次序。 
+WHERE在这里主要是做参与分组的记录的限制。 
+**另外，如果要选取出来一个不加组函数的列，如上面的 TITLE，就要把这个列GROUP BY !
+否则要出错的!信息为：ERROR at line 1: 
+ORA-00937: not a single-group group function
+理论很简单，如果不 GROUP BY TITLE，显示哪一个呢？这个在试题中经常出现。
+结论：不加分组函数修饰的列必定要出现在GROUP BY 里。
+错误实例： 
+SELECT dept_id, AVG(salary) 
+FROM s_emp 
+WHERE AVG(salary) > 2000 
+GROUP BY dept_id; 
+WHERE AVG(salary) > 2000 
+* ERROR at line 3: ORA-00934: group function is not allowed here
+
+应在 GROUP BY后面加上HAVING AVG(salary) > 2000;
+因为是用来限制组的返回。
+
+多级分组实例： 
+SELECT dept_id, title, COUNT(*) 
+FROM s_emp 
+GROUP BY dept_id, title;
+
+
+就是先按照 DEPT_ID分组，当 DEPT_ID相同的时候，再按 TITLE分组，而COUNT(*)以合成的组计数。
+顺序对结果有决定性的影响。
+总结：本课我们主要学习了分组函数的使用及如何进行分组查询，我们可以想象一下，SQLSERVER中有COMPUTE BY，来进行分组总数的计算，但在ORACLE中是没有的。大家可以建立一个有多个列，多个重复值的表，然后进行各种分组的演示，用得多了，自然明了。
+
+课程五子查询
+
+本课重点： 
+1、在条件未知的情况下采用嵌套子查询 
+2、用子查询做数据处理 
+3、子查询排序
+注意：以下实例中标点均为英文半角
+
+一、概述：
+子查询是一种SELECT句式中的高级特性，就是一个SELECT语句作为另一个语句的一个段。
+
+我们可以利用子查询来在WHERE字段中引用另一个查询来攻取值以补充其无法事先预知的子结果。
+子查询可以用在WHERE子句，HAING子句，SELECT或DELETE语句中的FROM子句。
+注意：1、子查询必须在一对圆括号里。
+2、比较符号：>, =,或者 IN. 
+3、子查询必须出现在操作符的右边 
+4、子查询不能出现在 ORDER BY里 
+(试题中有时出现找哪行出错)
+
+
+二、子查询的执行过程： 
+NESTED QUERY MAIN QUERY 
+
+SELECT dept_id 
+FROM s_emp
+WHERE UPPER(last_name)=.BIRI.; 
+
+SELECT last_name, title 
+FROM s_emp 
+WHERE dept_id =
+
+这里，每个查询只运行一次。当然，子查询要首先被执行，大家设想一下，如果子查询中有一个以上的人的LASTNAME为 BIRI，会如何？-----会出错，因为不能用=来连接。 
+ORA-1427: single-row subquery returns more than one row
+
+以上的查询也被称之为单行子查询。 
+DELECT子查询实例： 
+delete from new_table where cata_time > to_date('19990901','yyyymmdd') and pro_name=( 
+select pro_name from new_product where pro_addr in ('bj','sh'))
+
+三、子查询中的GROUP 函数的应用
+实例 1： 
+SELECT last_name, title, salary 
+FROM s_emp 
+WHERE salary < (SELECT AVG(salary) FROM s_emp);
+
+实例2：
+选择出工资最高的员工的家庭住址：
+select emp_addr from employees where salary = (select max(salary) from employees);
+这是一个简单实用的例子，可以衍生出很多情况，在实际应用经常出现，请大家多多思考。
+实例3： 
+SELECT dept_id, AVG(salary) 
+FROM s_emp 
+GROUP BY dept_id 
+HAVING AVG(salary) > 
+(SELECT AVG(salary) 
+FROM s_emp 
+WHERE dept_id = 32);
+
+
+子查询被多次执行，因为它出现在HAVING 子句中。 
+SELECT title, AVG(salary) 
+FROM s_emp 
+GROUP BY title 
+HAVING AVG(salary) = (SELECT MIN(AVG(salary))FROM s_emp GROUP BY title);
+
+
+对子查询，我们了解这么多在理论上已经覆盖了所有的知识点，对于 UPDATE 和 DELETE的子查询，不作为重点，但也要练习掌握。今天到这，谢谢大家。
+
+课程六运行时应用变量
+
+本课重点： 
+1、创建一个SELECT语句，提示USER在运行时先对变量赋值。 
+2、自动定义一系列变量，在SELECT运行时进行提取。 
+3、在SQL PLUS中用ACCEPT定义变量
+
+
+注意：以下实例中标点均为英文半角
+
+一、概述：
+变量可以在运行时应用，变量可以出现在 
+WHERE字段元，文本串，列名，表名等。 
+1、我们这里的运行时，指的是在SQL PLUS中运行。 
+2、ACCEPT：读取用户输入的值并赋值给变量
+3、DEFINE：创建并赋值给一个变数 
+4、在做REPORT时经常使用，比如对某个部门的销售信息进行统计，部门名称可以以变量代替。 
+SQL PLUS不支持对输入数据的有效性检查，因此提示要简单且不模棱两可。
+二、应用实例： 1、
+SELECT id, last_name, salary FROM s_emp 
+WHERE dept_id = &department_number; 
+
+2、可以在赋值前后进行比较： 
+SET VERIFY ON 
+..... 
+select * from emp where lastname='&last_name'
+输入 last_name的值: adopt
+原值 
+1: select * from emp where lastname='&last_name'
+新值 
+1: select * from emp where lastname='adopt' 
+----如果在原语句中没有单引号，那么在输入值的时候要手工加上单引号。一般字符和日期型要在语句中加上单引号。 
+SET VERIFY OFF 之后，原值和新值这两句消失。这在ORACLE8I中是默认为 ON。 
+3、子句为变数：WHERE &condition;要注意引号
+
+三、DEFINE和ACCEPT的应用： 
+1、SET ECHO OFF //使内容不显示在用户接口 
+ACCEPT p_dname PROMPT .Provide the department name: . 
+SELECT d.name, r.id, r.name ”REGION NAME” 
+FROM s_dept d, s_region r 
+WHERE d.region_id = r.id AND UPPER(d.name) LIKE UPPER(.%&p_dname%.) 
+/ 
+SET ECHO ON
+存为文件：l7prompt.SQL 
+START l7prompt 
+Provide the department name: sales 
+2、DEFINE dname = sales 
+DEFINE dname 
+DEFINE dname = ”sales” (CHAR) 
+SELECT name FROM s_dept WHERE lower(name) = .&dname.;
+可以正常执行了。 
+DEFINE dname主要是显示当前的变量是否赋值，值是什么。当然，我们可以用UNDEFINEGO来使变量恢复初始，不然它会一直保持下去。 
+3、如果变量在SQL SCRIPT文件中确定：可以 START l7param President 来赋值。
+
+总结：本课主要针对较古老的SQLPLUS方法，在REPORT和结果集生成方面使用变量，达到方便操作,动态修改的目的。 
+
+
+课程七其它数据库对象 
+SEQUENCE 
+创建实例： 
+CREATE SEQUENCE s_dept_id 
+INCREMENT BY 1 
+START WITH 51 
+MAXVALUE 9999999 
+NOCACHE 
+NOCYCLE; 
+
+1、NEXTVAL和 CURRVAL的用法只有在INSERT中，才可以作为子查询出现。
+
+以下几个方面不可用子查询： 
+SELECT子句 
+OF A VIEW
+有 DISTINCT的出现的 SELECT。
+有GROUP BY，HAVING，ORDER BY的SELECT子句。 
+SELECT或DELETE，UPDATE中的子查询。 
+DEFAULT选项中不能用。 
+
+
+2、编辑 
+SEQUENCE只有OWNER或有ALTER权限的用户才能修改SEQUENCE未来的NUMBER受修改的影响。
+不能修改 START WITH，如果变，则要RE－CREATE。
+修改会受到某些有效性检验的限制，如MAXVALUE 
+
+3、删除： 
+DROP SEQUENCE sequence; 
+ORACLE对象之 INDEX
+一、INDEX概述：
+是ORACLE的一种数据对象，用POINTER来加速查询行。通过快速路径存取方法定位数据并减少I/O。 
+INDEX独立于表。INDEX由 ORACLE SERVER来使用和保持。
+二、索引如何建立？ 
+1、自动：通过 PRIMARY KEY和 UNIQUE KEY约束来建立。 
+
+2、用户手工建立非唯一性索引。
+三、创建方法：
+语法：CREATE INDEX index ON table (column[, column]...);
+何时建立 
+INDEX：
+此列经常被放到 WHERE字段或 JOIN来作条件查询。
+此列含有大量的数据。
+此列含有大量的空值。
+两个或几个列经常同时放到 WHERE字段进行组合查询表很大而且只有少于 2-4%的 ROW可能被查询的时候。
+以下情况不要建立索引：
+表很小；
+表被更新频繁。
+
+四、查看已经存在的索引： 
+1、USER_INDEXES可以查询索引名和类型。 
+2、USER_IND_COLUMNS包含索引名、表名、列名。
+实例： 
+SELECT ic.index_name, ic.column_name, 
+ic.column_position col_pos, ix.uniqueness 
+FROM user_indexes ix, user_ind_columns ic 
+WHERE ic.index_name = ix.index_name AND ic.table_name = .S_EMP.;
+
+五、删除索引： 
+DROP INDEX index; 
+
+SYNONYMS 同义词
+语法： 
+CREATE [PUBLIC] SYNONYM synonym for object;
+注意：此对象不能包含在一个包里；
+一个私有的同义词不能与同一 USER的其它对象重名。 
+DROP SYNONYM D_SUM；
+
+课程八用户访问控制
+本课重点：
+1、创建用户 
+2、创建角色来进行安全设置 
+3、使用 GRANT或REVOKE 来控制权限
+注意：以下实例中标点均为英文半角
+一、概述： 
+ORACLE通过用户名和密码进行权限控制。
+数据库安全：系统安全和数据安全
+系统权限：使用户可以访问数据库
+对象权限：操纵数据库中的对象 
+SCHEMA：各种对象的集合
+
+二、系统权限： 
+1、超过 80个权限可用。 
+2、DBA有最高的系统权限： 
+CREATE NEW USER 
+REMOVE USERS 
+REMOVE ANY TABLE 
+BACKUP ANY TABLE
+
+三、创建用户 
+CREATE USER user IDENTIFIED BY password; 
+2、系统权限：CREATE SESSION Connect to the database. 
+
+CREATE TABLE Create tables in the user.s schema. 
+CREATE SEQUENCE Create a sequence in the user.s schema. 
+CREATE VIEW Create a view in the user.s schema. 
+CREATE PROCEDURE Create a stored procedure, function, or package in the user.s schema. 
+
+3、授权用户系统权限： 
+GRANT privilege [, privilege...] TO user [, user...]; 
+GRANT CREATE TABLE TO SCOTT；
+
+四、角色的使用 
+1、概念：角色是一组权限的命名，可以授予给用户。这样就如同给了某个用户一个权限包。 
+2、创建、授予给角色： 
+CREATE ROLE MANAGER； 
+GRANT CREATE TABLE，CREATE VIEW TO MANAGER； 
+GRANT MANAGER TO CLARK 
+
+五、修改密码： 
+ALTER USER user IDENTIFIED BY password;
+
+六、对象权限： 
+1、语句： 
+GRANT {object_priv(, object_priv...)|ALL}[(columns)] 
+ON object 
+TO {user[, user...]|role|PUBLIC} 
+[WITH GRANT OPTION]; 
+
+2、实例：
+最简单： 
+GRANT select ON s_emp TO sue, rich;
+
+稍复杂： 
+GRANT update (name, region_id) ON s_dept TO scott, manager; 
+GRANT select, insert ON s_dept TO scott WITH GRANT OPTION;
+
+课程九声明变数
+
+本课重点：
+1、了解基本的 PLSQL块和区域 
+2、描述变量在 PLSQL中的重要性 
+3、区别 
+PLSQL与非 
+PLSQL变数 
+4、声明变数 
+5、执行 
+PLSQL块
+
+注意：以下实例中标点均为英文半角
+
+一、概述： 
+1、PLSQL块结构： 
+DECLARE ---可选
+
+变量声明定义 
+BEGIN ----必选 
+
+
+SQL和 
+PLSQL语句 
+EXCEPTION ----可选
+错误处理 
+END；----必选
+
+
+二、实例： 
+
+
+declare 
+vjob varchar(9); 
+v_count number:=0; 
+vtotal date:=sysdate +7; 
+c_tax constant number(3,2):=8.25; 
+v_valid boolean not null:=true; 
+
+
+begin 
+select sysdate into vtotal from dual; 
+end; 
+/
+上例中，如果没有这个 
+SELECT语句，会如何？
+出错，说明必须有 
+STATEMENTS 
+
+
+如果： 
+select sysdate from dual into vtotal ;
+同样，也不行。而且变量与赋值的类型要匹配。
+
+
+三、%TYPE的属性
+声明一个变量使之与数据库某个列的定义相同或与另一个已经定义过的变量相同
+所以%TYPE要作为列名的后缀：如： 
+
+
+v_last_name s_emp.last_name%TYPE; 
+v_first_name s_emp.first_name%TYPE; --这样做的好处是我们不必去知晓此列的类型与定义
+或：v_balance NUMBER(7,2); 
+v_minimum_balance v_balance%TYPE := 10;
+
+四、声明一个布尔类型的变量 
+1 只有 
+TRUE、FALSE、NULL可以赋值给 
+BOOLEAN变量 
+2 此变量可以接逻辑运算符 
+NOT、AND、OR。 
+3、变量只能产生 
+TRUE、FALSE、NULL。
+实例： 
+
+
+VSAL1：=50000； 
+VSQL2：=60000； 
+VCOMMSAL BOOLEAN：=(VSAL1<VSQL2)； 
+--其实是把 
+TRUE赋值给此变数。
+
+
+五、LOB 类型的变量
+共有 
+CLOB、BLOB、BFILE、NCLOB几种，这里不做为重点。
+六：使用 
+HOST VARIABLES 
+variable n number 
+
+print n：n=v_sal /12; 
+
+:n这个加了：前缀的变量不是 
+PLSQL变量，而是 
+HOST。
+七、以下几个 
+PLSQL声明变数，哪个不合法？ 
+A 、DECLARE 
+
+V_ID NUMBER(4)； 
+B、DECLARE 
+V_X，V_Y，V_Z VARCHAR2(9)；
+
+
+C、DECLARE 
+V_BIRTH DATE NOT NULL； 
+D、DECLARE 
+V_IN_STOCK BOOLEAN：=1； 
+E、DECLARE 
+TYPE NAME_TAB IS TABLE OF VARCHAR2(20) 
+INDEX BY BINARY_INTEGER； 
+DEPT_NAME NAME_TAB；
+上面的习题我会在下章给出答案，这也正是声明变量的规则和难点。
+
+课程十写执行语句
+
+本课重点： 
+1、了解 
+PLSQL执行区间的重要性 
+2、写执行语句 
+3、描述嵌套块的规则 
+4、执行且测试 
+PLSQL块 
+5、使用代码惯例
+
+注意：以下实例中标点均为英文半角
+
+一、PLSQL块的语法规则： 
+1、语句可以跨跃几行。 
+2、词汇单元可以包括：分隔符号、标识符、文字、和注释内容。 
+3、分隔符号： 
+
+
++-*/=<>||.... 
+
+4、标识符：
+最多 
+30个字符，不能有保留字除非用双引号引起。
+字母开头，不与列同名。 
+
+
+5、文字符串：如 
+V_ENAME:='FANCY';要用单引号括起来。
+
+
+数值型可以用简单记数和科学记数法。 
+6、注释内容：单行时用--多行用/* */
+与 
+C很相似
+二、SQL函数在 
+PL/SQL的使用： 
+1、可用的：
+单行数值型、字符型和转换型，日期型。 
+
+
+2、不可用的：
+最大、最小、DECODE、分组函数。
+实例： 
+
+
+BEGIN 
+
+SELECT TO_CHAR(HIREDATE,'MON,DD,YYYY') FROM EMP; 
+END; 
+V_comment:=user||':'||sysdate; --会编译出错 
+V_comment:=user||':'||to_char(sysdate); --正确
+如果有可能， 
+PLSQL都会进行资料一致性的转换，但 
+ORACLE推荐你应该进行显示的转换，因
+
+为这样
+会提高性能。
+
+三、嵌套块和变量作用区域 
+1、执行语句允许嵌套时嵌套。 
+2、嵌套块可以看作正常的语句块。 
+3、错误处理模块可以包括一个嵌套块 
+
+
+4、exponential指数逻辑、算数、连接、小括号 
+5、看正面实例： 
+
+
+declare 
+vjob varchar(9); 
+v_count number:=0; 
+vtotal date:=sysdate +7; 
+c_tax constant number(3,2):=8.25; 
+v_valid boolean not null:=true; 
+ttt vtotal%type; 
+
+
+
+begin 
+--select sysdate into vtotal from dual;--体会有无此句与结果的影响 
+dbms_output.put_line (vtotal); 
+end; 
+/
+
+注意：在执行块之前，要在 
+SQL PLUS中执行：SET SERVEROUTPUT ON
+三、以实例来说明函数的参数声明作用域 
+
+
+declare 
+
+v_weight number(3):=600; 
+v_message varchar2(255):='product10000'; 
+begin 
+declare 
+
+--sub-block 
+v_weight number(3):=1; 
+v_message varchar2(255):='pro300'; 
+begin 
+v_weight:=v_weight +1; 
+end; 
+v_weight:=v_weight +1; 
+v_message:=v_message || 'my name'; 
+end; 
+/
+
+子块中的 
+V_WEIGHT值为 
+2
+
+我们可以在子块中加入：dbms_output.put_line('subblock value is '||v_weight);
+在主体中加入：dbms_output.put_line('main value is '||v_weight);
+我们发现 
+MAINBLOCK中 
+V_WEIGHT为 
+601
+
+改动： 
+1、在主块的声明中加 
+v_date date default sysdate;
+在子块中加入：dbms_output.put_line('subblock date value is '||v_date);
+执行结果：subblock date value is 22-11月-01 
+
+
+
+****说明：主块中的变量，如果子块中没有同名变量声明，则继承主块中的声明和初始化值； 
+2、在子块中加入：v_sub char(9); 
+dbms_output.put_line('subblock char value is '||v_sub);
+
+
+此时正常输出。
+在主块中加入：dbms_output.put_line('main char value is '||v_sub);
+输出：ORA-06550:第 
+21行, 第 
+45列: 
+PLS-00201:必须说明标识符 
+'V_SUB'
+说明：
+子块中声明的变量主块中并不知晓，因此出错。
+了解了此实例，一切情况的变量的值的走向就都明了了。
+
+
+课程十一与 
+ORACLE SERVER交互
+
+本课重点： 
+1、在 
+PLSQL中成功的写 
+SELECT语句 
+2、动态声明 
+PLSQL变量类型与 
+SIZE 
+3、在 
+PLSQL中写 
+DML语句 
+4、在 
+PLSQL中控制事务 
+5、确定 
+DML操作的结果
+
+
+注意：以下实例中标点均为英文半角
+
+一、PLSQL中的 
+SQL语句： 
+SELECT、DML、COMMIT、ROLLBACK、SAVEPOINT、CURSOR
+特殊强调： 
+PLSQL不支持 
+DCL，不要问为什么。 
+(DBMS_SQL package allows you to issue DDL 
+
+and 
+DCL statements.)
+二、SELECT 
+SELECT select_list 
+INTO variable_name | record_name 
+
+
+FROM table 
+WHERE condition;
+
+
+例： 
+
+
+r 
+
+1 declare 
+
+2 v_deptno number(2); 
+
+3 v_loc varchar2(15); 
+
+4 begin 
+
+5 select deptno,loc 
+
+6 into v_deptno,v_loc 
+
+7 from dept 
+
+8 where dname='SALES'; 
+
+9 DBMS_OUTPUT.PUT_LINE (V_deptno ||' and '||v_loc); 
+
+10* end; 
+30 and CHICAGO
+选取字段与变量个数和类型要一致。声明的变量一定要在 
+SIZE上大于返回的赋值，否则提示缓
+
+冲区
+
+溢出。
+
+如果 
+SELECT语句没有返回值：ORA-01403:未找到数据 
+
+
+ORA-06512: 在 
+line 5
+如果有多个值返回：ORA-01422: 实际返回的行数超出请求的行数
+这些我们到了错误处理时会逐一讲解。
+例：
+上面的例子可以改为： 
+
+
+declare 
+
+v_deptno dept.deptno%type; 
+
+v_loc dept.loc%type; 
+
+begin 
+
+select deptno,loc 
+
+into v_deptno,v_loc 
+
+
+from dept 
+where dname='SALES'; 
+DBMS_OUTPUT.PUT_LINE (V_deptno ||' and '||v_loc); 
+end; 
+/
+
+这样，可以在未知其它字段大小和类型的时候定义变量，提高兼容性。
+三、DML操作： 
+1、实例： 
+
+
+declare 
+v_empno emp.empno%type; 
+begin 
+
+select max(empno) 
+into v_empno 
+from emp; 
+
+
+v_empno:=v_empno+1; 
+insert into emp(empno,ename,job,deptno) 
+values(v_empno,'asdfasdf','ddddd',10); 
+end; 
+
+/
+这样也可以实现如 
+SEQUENCE一样的编号唯一递增。 
+2、更新和删除：
+
+这个较为简单： 
+
+
+DECLARE 
+V_DEPTNO EMP.DEPtno%type :=10; 
+begin 
+delete from emp 
+where deptno=v_deptno; 
+end; 
+/
+
+大家多多实践即可掌握。
+
+
+PLSQL首先检查一个标识符是否是一个数据库的列名，如果不是，再假定它是一个 
+PLSQL的标
+
+识符。所
+
+以如果一个 
+PLSQL的变量名为 
+ID，列中也有个 
+ID，如： 
+
+
+SELECT date_ordered, date_shipped 
+
+INTO date_ordered, date_shipped 
+
+FROM s_ord 
+
+WHERE id = id;
+
+就会返回 
+TOO MANY ROWS，这是要尽量避免的。
+
+四、SQL CURSOR
+
+游标是一个独立 
+SQL工作区，有两种性质的游标：
+
+隐式游标：当 
+PARSE 和 
+EXECUTE 时使用隐式游标。
+
+显式游标：是由程序员显式声明的。
+
+游标的属性： 
+
+
+SQL%ROWCOUNT：一个整数值，最近 
+SQL语句影响的行数。 
+
+
+SQL%FOUND BOOLEAN属性，如果为 
+TRUE，说明最近的 
+SQL STATEMENT有返回值。 
+
+
+SQL%NOTFOUND与 
+SQL%FOUND相反 
+
+
+SQL%ISOPEN在隐式游标中经常是 
+FALSE，因为执行后立即自动关闭了。 
+
+
+variable row_de number 
+
+r 
+
+1 declare 
+
+2 v_deptno number:=10; 
+
+3 begin 
+
+4 delete from emp where 
+
+5 deptno=v_deptno; 
+
+6 :row_de:=sql%rowcount; 
+
+7* end; 
+
+PL/SQL过程已成功完成。 
+
+
+print row_de --这是一个 
+SQL PLUS变数 
+
+
+ROW_DE 
+
+
+4
+这时其实并没有真正的删除，而是需要 
+COMMIT或 
+ROLLBACK，来完成事务。 
+
+
+14:37 |添加评论 
+| 固定链接 
+| 引用通告 
+(0) |写入日志 
+| 计算机与 
+Internet 
+PL/Sql循序渐进全面学习教程--Oracle(4)
+课程十二编写控制结构语句
+本课重点： 
+1、结构控制的的用途和类型 
+2、IF结构 
+3、构造和标识不同的循环 
+4、使用逻辑表 
+5、控制流和嵌套
+
+
+注意：以下实例中标点均为英文半角
+
+一、控制执行流
+可以是分支和循环：IF THEN END IF 
+
+
+IF condition THEN 
+statements; 
+[ELSIF condition THEN 
+statements;] 
+[ELSE 
+statements;] 
+END IF;
+
+
+例子：IF V_ENAME='OSBORNE' THEN 
+V_MGR:=22; 
+END IF;
+这里我们可以注意，PLSQL和 
+C语言或 
+JAVA在条件上的不同， 
+=代表关系运算，而：=代表
+
+赋值。
+看一个函数：
+
+
+create FUNCTION calc_val 
+(v_start IN NUMBER) 
+RETURN NUMBER 
+IS 
+BEGIN 
+IF v_start > 100 THEN 
+RETURN (2 * v_start); 
+ELSIF v_start >= 50 THEN 
+RETURN (.5 * v_start); 
+ELSE 
+RETURN (.1 * v_start); 
+END IF; 
+END calc_val;
+
+现在，虽然我们尚未讲解 
+CREATE 函数或过程，但可以看到 
+IF 条件在其中的作用。
+
+二、注意 
+LOGIC TABLE中的逻辑对应关系 
+1、NOT、AND、OR 
+2、任何表达式中含有空值结果都为 
+NULL 
+3、连接字符串中含有空值会把 
+NULL作为 
+EMPTY STRING 
+
+
+declare 
+v_deptno dept.deptno%type; 
+v_loc dept.loc%type; 
+
+
+V_FLAG BOOLEAN ; 
+V_REC BOOLEAN :=FALSE; --此值改为 
+TRUE、NULL、FALSE进行不同的比较 
+V_AVA BOOLEAN:=NULL; 
+
+
+begin 
+V_FLAG:=V_REC AND V_AVA; 
+IF V_FLAG=TRUE THEN 
+
+DBMS_OUTPUT.PUT_LINE ('TRUE'); 
+ELSIF V_FLAG=FALSE THEN 
+DBMS_OUTPUT.PUT_LINE ('FALSE'); 
+
+
+ELSE 
+DBMS_OUTPUT.PUT_LINE ('NULL'); 
+END IF; 
+end; 
+
+/
+值得注意的是：NULL AND FALSE ---> FALSE
+这是在实践中总结出来的。
+三、基本循环基础： 
+1、LOOP 
+
+statement1; 
+statement2; 
+. . . 
+EXIT [WHEN condition]; 
+END LOOP; 
+
+
+v_ord_id s_item.ord_id%TYPE := 101; 
+v_counter NUMBER (2) := 1; 
+BEGIN 
+. . . 
+LOOP 
+INSERT INTO s_item (ord_id, item_id) 
+VALUES (v_ord_id, v_counter); 
+v_counter := v_counter + 1; 
+EXIT WHEN v_counter > 10; 
+END LOOP; 
+
+2、FOR循环： 
+
+
+FOR index IN [REVERSE] lower_bound..upper_bound LOOP 
+statement1; 
+statement2; 
+. . . 
+END LOOP; 
+
+
+实例：DECLARE 
+V_LOWER NUMBER:=1; 
+
+
+V_UPPER NUMBER:=23; 
+BEGIN 
+DBMS_OUTPUT.PUT_LINE(''); 
+
+FOR I IN V_LOWER..V_UPPER LOOP 
+DBMS_OUTPUT.PUT_LINE(I); 
+END LOOP; 
+END; 
+/ 
+
+3、WHILE循环： 
+
+
+WHILE condition LOOP 
+statement1; 
+statement2; 
+. . . 
+END LOOP; 
+
+4、循环是可以多层嵌套的。可以用 
+<<LABEL>>做循环的标签。 
+... 
+BEGIN 
+<<Outer–loop>>LOOP 
+v_counter :=v_counter+1; 
+EXIT WHEN v_counter>10; 
+<<Inner–loop>>LOOP 
+... 
+
+EXIT Outer_loop WHEN total_done = .YES.; 
+–– Leave both loops 
+EXIT WHEN inner_done = .YES.; 
+–– Leave inner loop only 
+... 
+
+
+
+END LOOP Inner_Loop; 
+... 
+END LOOP Outer_loop; 
+END;
+
+
+总结：本章内容较为繁杂，虽然不是很难，而且多数与其它高级语言有某种共性，但大家要多多
+
+练习
+，用实践来检验对某些含糊的猜测。
+课程十三使用组合数据类型 
+* 游标操纵数据
+
+本课重点： 
+1、创建用户自定义的 
+PLSQL记录 
+2、利用 
+%ROWTYPE属性来创建记录 
+3、创建 
+PLSQL表 
+4、描述记录、表、记录的表之间的区别
+
+
+注意：以下实例中标点均为英文半角
+一、合成数据类型 
+1、类型分为 
+PLSQL记录和 
+PLSQL表 
+2、包含内部组件 
+3、可重用
+
+
+二、PLSQL记录
+与 
+3GL中的记录结构相似
+与数据库表是两回事
+是一个方便的途径 
+FETCH一些行 
+FROM一个表来进行相关处理。
+标准语法格式我们暂不介绍，因为每本书上均有。
+看例子： 
+
+
+declare 
+vjob varchar(9); 
+v_count number:=0; 
+vtotal date:=sysdate +7; 
+c_tax constant number(3,2):=8.25; 
+
+
+
+v_valid boolean not null:=true; 
+ttt vtotal%type; 
+type emp_record_type is record 
+
+
+(empno number not null:=100, 
+ename emp.ename%type, 
+
+
+job emp.job%type); 
+emp_record emp_record_type; 
+begin 
+--select sysdate into vtotal from dual;--体会有无此句与结果的影响 
+dbms_output.put_line (vtotal); 
+end; 
+/
+
+
+主要看 
+TYPE RECORD出现的位置。每一个例子都是可以成功执行的。
+我们也可以利用原有的表结构： 
+
+
+DECLARE 
+EMP_RECORD EMP%ROWTYPE；
+
+
+游标操纵资料 
+PLSQL游标提供了一种从数据库提取多行数据，然后对每行资料进行单独处理的方法。
+一、两种游标：
+
+显式游标
+
+隐式游标
+二、显式游标：操纵步骤如下：声明游标、打开游标、从游标中取回资料、关闭游标
+三、声明游标： 
+
+
+DECLARE CURSOR_NAME 
+IS 
+SELECT STATMENT
+能够控制游标的，唯一参数是 
+INIT.ORA中的 
+OPEN_CURSORS，我原来以为是客户端最多可
+
+以打开多
+少个游标，但有本书上讲这是用于管理游标的内存的数量。 
+
+
+DECLARE 
+
+
+CURSOR C_NAME 
+IS 
+SELECT ENAME FROM EMP 
+
+
+WHERE DEPTNO IN (SELECT DEPTNO FROM DEPT 
+
+WHERE CITY_ID=.BJ.) 
+
+---说明游标可以用子查询
+
+四、打开游标 
+OPEN CURSOR_NAME；
+这时游标将它的指标指向活动集的开始，指针指向第一条记录的前面是因为它还没有执行 
+
+
+FETCH命令
+。如果试图打开一个已经打开的游标，将出错： 
+ORA-06511：PL/SQL：CURSOR ALREADY OPEN
+我们可以这样： 
+
+
+IF NOT C_NAME%ISOPEN 
+THEN 
+OPEN C_NAME； 
+END IF；
+五、从游标中取回资料 
+FETCH CURSOR_NAME INTO RECOR-LIST；
+关闭游标：CLOSE CURSOR_NAME
+
+
+六、实例： 
+
+
+DECLARE 
+myname varchar2(22); 
+
+
+CURSOR C_NAME 
+IS 
+SELECT ENAME FROM EMP; 
+
+
+begin 
+
+IF NOT C_NAME%ISOPEN 
+THEN 
+OPEN C_NAME; 
+
+
+
+end if; 
+LOOP 
+FETCH c_name into myname; 
+dbms_output.put_line (myname); 
+exit when c_name%notfound; 
+end loop; 
+close c_name; 
+end; 
+/--我们将对以上程序进行变形，形成复杂的光标利用。 
+DECLARE 
+
+
+myname varchar2(22); 
+thisdeptno scott.emp.deptno%type; 
+
+
+CURSOR C_NAME 
+IS 
+SELECT ENAME,deptno FROM EMP order by deptno desc; 
+
+
+begin 
+
+IF NOT C_NAME%ISOPEN 
+THEN 
+OPEN C_NAME; 
+
+end if; 
+LOOP 
+FETCH c_name into myname,thisdeptno; 
+dbms_output.put_line (myname||','||thisdeptno || ',' || to_char(c_name%rowcount)); 
+exit when c_name%notfound; 
+end loop; 
+dbms_output.put_line ('the Total record is fetched is ' || to_char(c_name%rowcount)); 
+close c_name; 
+end; 
+/
+
+
+我们增加变量，进行用了排序，使用了游标属性，大家看结果发生的变化，想想为什么。
+
+
+实例精华!!!： 
+DECLARE 
+myname varchar2(22); 
+ii number; 
+thisdeptno scott.emp.deptno%type; 
+
+
+CURSOR C_NAME 
+IS 
+SELECT * FROM EMP order by deptno desc; 
+emp_record c_name%rowtype; 
+
+
+begin 
+ii:=1; 
+for emp_record in c_name loop 
+
+
+dbms_output.put_line(ii); 
+ii:=ii+1; 
+end loop; 
+end; 
+/ 
+--这里使用了游标 
+FOR循环，在 
+FOR循环的开始，进行、和 
+END LOOP，分别隐式进行了游标的
+
+打开、FETCH
+和 
+CLOSE。
+
+我们甚至可以不声明游标：FOR emp_record in (SELECT * FROM DEPT) loop
+这种技术被称为显式游标的自动化。
+在上面，我们可以将一个表的所有字段输出 
+,如我们将 
+PUT_LINE的 
+II改为 
+emp_record.ename，
+
+就可以
+输出一个字段内容。
+这种方式非常简单而且效率较高。 
+
+
+为了测试游标属性的重要性，我们做一个以下的过程： 
+
+
+create or replace PROCEDURE change_salary 
+(v_emp_id IN NUMBER, --formal parameters 
+v_new_salary IN NUMBER) 
+IS 
+
+
+
+BEGIN --begin PL/SQL block 
+UPDATE emp 
+SET sal = v_new_salary 
+WHERE empno = v_emp_id; 
+COMMIT; 
+END change_salary; 
+
+
+/
+
+
+这样，我们在匿名块中， 
+
+
+UPDATE DEPT 
+SET DNAME='MY DEPT' WHERE ....; 
+IF SQL%FOUND THEN 
+
+COMMIT; 
+ELSE 
+change_salary(7369,9000); 
+
+
+END IF;
+
+我们看到我们通过流程控制了不同的执行结果，对于过程，我们可以用以下几种方法调用：
+在 
+SQLPLUS中：CALL change_salary(7369,9000); 
+EXECUTE change_salary(7369,9000);
+
+在一个块中，如： 
+
+
+begin 
+change_salary(7369,9000); 
+end; 
+
+14:35 |添加评论 
+| 固定链接 
+| 引用通告 
+(0) |写入日志 
+| 计算机与 
+Internet 
+PL/Sql循序渐进全面学习教程--Oracle(5)
+最后一课异常处理本章重点： 
+1、定义 
+PLSQL异常 
+2、列举不同的异常处理方法 
+3、捕获非预期的错误 
+4、描述异常的影响 
+5、定制异常的返回信息一、PLSQL异常处理
+
+
+
+异常是由 
+ORACLE错误或显式的抛出一个错误产生的。
+如何处理：
+用一个处理程序来捕获它；
+将它传递给 
+CALLING ENVIRONMENT
+
+
+二、异常的类型： 
+ORACLE SERVER预定义错误
+非 
+ORACLE SERVER预定义错误，但也是 
+ORACLE SERVER的标准错误
+用户自定义异常
+
+三、捕捉异常的要点： 
+
+
+Place the WHEN OTHERS clause after all other exception handling clauses. 
+You can have at most one WHEN OTHERS clause. 
+Begin exception-handling section of the block with the keyword EXCEPTION. 
+Define several exception handlers, each with their own set of actions, for the 
+block. 
+When an exception occurs, PL/SQL will process only one handler before leaving 
+the block. 
+
+EXCEPTION 
+WHEN exception1 [OR exception2 . . .] THEN 
+statement1;
+
+四、常用错误： 
+
+
+NO_DATA_FOUND ORA-01403 
+TOO_MANY_ROWS ORA-01422 
+INVALID_CURSOR ORA-01001 
+ZERO_DIVIDE ORA-01476 
+DUP_VAL_ON_INDEX ORA-00001
+
+
+五、实例 
+
+
+PROCEDURE elim_inventory 
+(v_product_id IN s_product.id%TYPE) IS 
+v_id s_product.id%TYPE; 
+
+
+BEGIN 
+SELECT id 
+INTO v_id 
+FROM s_product 
+WHERE id = v_product_id; 
+DELETE FROM s_inventory 
+WHERE product_id = v_product_id; 
+COMMIT; 
+EXCEPTION 
+WHEN NO_DATA_FOUND THEN 
+ROLLBACK; 
+TEXT_IO.PUT_LINE(TO_CHAR(v_product_id)|| 
+
+. is invalid..); 
+
+WHEN TOO_MANY_ROWS THEN 
+ROLLBACK; 
+
+TEXT_IO.PUT_LINE(.Data corruption in S_PRODUCT..); 
+
+WHEN OTHERS THEN 
+ROLLBACK; 
+
+TEXT_IO.PUT_LINE(.Other error occurred..); 
+
+END elim_inventory;
+
+在 
+SCOTT环境中使用要稍加改动
+六、使用 
+non-predefined Oracle7 Server error 
+DECLARE 
+
+
+E_PRO EXCEPTION; 
+PRAGMA EXCEPTION_INIT(E_PRO,ERROR_NUMBER); 
+BEGIN 
+...... 
+EXCEPTION 
+WHEN E_PRO THEN 
+DBMS_OUTPUT.PUT_LINE('ASDLKFJKASDJFASJDFLKASDF'); 
+
+
+...... 
+END;
+
+
+七、用户自定义 
+
+
+exception EXCEPTION; 
+RAISE exception; EXCEPTION 
+WHEN E_PRO THEN 
+DBMS_OUTPUT.PUT_LINE('ASDLKFJKASDJFASJDFLKASDF'); 
+
+
+...... 
+END;这里，只有用户自定义异常是要显式声明的，其它两个不用。
+在 
+SUN OS5.8中，进行 
+SVRMGRL> OERR ORA 01840可返回信息
+或查错误代码： 
+
+
+HTTP://TECHNET.ORACLE.COM/DOC/SERVER.815/A67785/E1500.HTM
+
+题外话，create public database link otlink connect to system identified 
+by manager using 'oratest';
+
+说回来，以下两个函数： 
+
+
+SQLCODE ----Returns the numeric value for the error code. You can assign it 
+to a NUMBER variable. 
+SQLERRM ----Returns character data containing the message associated with 
+the error number.
+
+一般这样， 
+
+
+EXCEPTION 
+
+... WHEN OTHERS THEN 
+ROLLBACK; 
+v_error_code:=SQLCODE; 
+V_ERROR_MESSAGE:=SQLERRM; 
+INSERT INTO ........ 
+
+
+END;
+
+八、调用外围环境 
+
+
+SQLPLUS 
+PROCEDURE BUILDER 
+
+
+
+DEVELOPER 2000 
+OTHER ......... 
+----也就是把 
+ERROR NUMBER和 
+MESSAGE输出到 
+SCREEN。
+九、使用 
+RAISE_APPLICATION_ERROR 
+EXCEPTION 
+
+
+WHEN NO_DATA_FOUND THEN 
+RAISE_APPLICATION_ERROR(-20201,'NO MATCH RECORD YOU WANNA'); 
+END;
+当然，RAISE_APPLICATION_ERRO也是可以放在 
+EXECUTE区的，IF 。。。 
+THEN 
+RAISE_APPLICATION_ERRO()； 
+END IF；
+
+这也是很好理解
+有效创建 
+oracle dblink的两种方式 
+1、已经配置本地服务
+
+
+以下是引用片段： 
+
+
+create public database 
+link fwq12 connect to fzept 
+identified by neu using 'fjept' 
+CREATE DATABASE LINK数据库链接名 
+CONNECT TO 用户名 
+IDENTIFIED BY密码 
+
+
+USING .本地配置的
+数据的实例名.; 
+2、未配置本地服务
+以下是引用片段： 
+
+
+create database link linkfwq 
+connect to fzept identified by neu 
+using '(DESCRIPTION = 
+(ADDRESS_LIST = 
+(ADDRESS = (PROTOCOL = TCP)(HOST = 10.142.202.12)(PORT = 1521)) 
+) 
+
+
+(CONNECT_DATA = 
+(SERVICE_NAME = fjept) 
+) 
+)'; 
+
+
+host=数据库的 
+ip地址，service_name=数据库的 
+ssid。
+其实两种方法配置 
+dblink是差不多的，我个人感觉还是第二种方法比较好，这样不受本地服务
+
+的影响
+
+。
+数据库连接字符串可以用 
+NET8 EASY CONFIG或者直接修改 
+TNSNAMES.ORA里定义 
+.
+数据库参数 
+global_name=true时要求数据库链接名称跟远程数据库名称一样
+数据库全局名称可以用以下命令查出 
+
+
+SELECT * FROM GLOBAL_NAME;
+
+查询远程数据库里的表 
+SELECT …… FROM表名@数据库链接名;
+查询、删除和插入数据和操作本地的数据库是一样的，只不过表名需要写成“表名@dblink服务
+
+器”
+
+而已。
+附带说下同义词创建: 
+CREATE SYNONYM同义词名 
+FOR表名; 
+CREATE SYNONYM同义词名 
+FOR表名@数据库链接名;
+删除 
+dblink：DROP PUBLIC DATABASE LINK linkfwq。
+如果创建全局 
+dblink，必须使用 
+systm或 
+sys用户，在 
+database前加 
+public 
+
+
+

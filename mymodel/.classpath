@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="myheadfirst"/>
+	<classpathentry kind="src" path="proxy-pattern"/>
+	<classpathentry kind="src" path="model23"/>
+	<classpathentry kind="src" path="datastructure"/>
+	<classpathentry kind="src" path="headfirst"/>
+	<classpathentry kind="src" path="sort"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/junit-4.4.jar"/>
+	<classpathentry kind="lib" path="lib/asm-2.2.3.jar"/>
+	<classpathentry kind="lib" path="lib/cglib-2.1.3.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
