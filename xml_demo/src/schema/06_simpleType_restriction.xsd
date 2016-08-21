@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+		
+	<xsd:simpleType name="myType">
+		<xsd:restriction base="xsd:integer">
+			
+			<xsd:enumeration value="5"/>
+			<xsd:enumeration value="7"/>
+			<xsd:enumeration value="9"/>
+			
+			<!-- 
+			<xsd:maxExclusive value="10"></xsd:maxExclusive>
+			<xsd:minExclusive value="5"></xsd:minExclusive>
+			 -->
+			
+			<!-- 
+			<xsd:minInclusive value="0"></xsd:minInclusive>
+			<xsd:maxInclusive value="10"></xsd:maxInclusive>
+			 -->
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:element name="hello" type="myType"></xsd:element>
+	
+</xsd:schema>

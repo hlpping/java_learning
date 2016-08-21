@@ -1,0 +1,13 @@
+ junit单元测试一下代码出错：java.lang.NoSuchFieldError: NONE
+经过debug错误在"Query query = em.createQuery("select o from "+ entityName+" o ");"
+
+java.lang.NoSuchFieldError: NONE  
+    at org.hibernate.ejb.QueryImpl.<init>(QueryImpl.java:609)  
+    at org.hibernate.ejb.QueryImpl.<init>(QueryImpl.java:80)  
+    at org.hibernate.ejb.AbstractEntityManagerImpl.createQuery(AbstractEntityManagerImpl.java:272)  
+    
+
+原因：
+错误是由javax.persistence.LockModeType造成的。 hibernate-jpa-2.0-api-1.0.0.Final.jar和Java EE 5中javaee.jar 都存在此类。
+但二者中代码却有差异，具体到此错误：hibernate-jpa-2.0-api-1.0.0.Final.jar存在NONE域，在javaee.jar中不存在NONE域。 hibernate3.x实现中，需要调用有NONE域的LockModeType类，这里显然是使用javaee.jar中的LockModeType类。
+解决方法： 将Myeclipse中Java EE 5 Libraries从Myeclipse "BuildPath""Liberaries"中删除即可。

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+		
+	<xsd:attributeGroup name="myAttributeGroup">
+		<xsd:attribute name="hello" type="xsd:string" use="required"></xsd:attribute>
+		<xsd:attribute name="world" type="xsd:string" use="required"></xsd:attribute>
+	</xsd:attributeGroup>
+	
+	<xsd:element name="myElement">
+		<xsd:complexType>
+			<xsd:attributeGroup ref="myAttributeGroup"></xsd:attributeGroup>	
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ftpserver>
+	<server>10.6.183.56</server>
+	<user>oracle</user>
+	<password>oracle</password>
+	<remotedirectory><![CDATA[/]]></remotedirectory>
+	<localdirectory><![CDATA[E:\Z_temp\down]]></localdirectory>
+</ftpserver>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+		
+	<xsd:simpleType name="myType">
+		<xsd:list itemType="xsd:date"></xsd:list>
+	</xsd:simpleType>
+	
+	<xsd:element name="hello" type="myType"></xsd:element>
+	
+</xsd:schema>

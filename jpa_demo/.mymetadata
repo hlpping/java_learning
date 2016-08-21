@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="jpa_demo"
+  id="myeclipse.1346066356671"
+  context-root="/jpa_demo"
+  j2ee-spec="5.0"
+  archive="jpa_demo.war">
+  <attributes>
+    <attribute name="webrootdir" value="WebRoot" />
+  </attributes>
+</project-module>
+

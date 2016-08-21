@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shoeSize xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:noNamespaceSchemaLocation="07_simpleContent.xsd" sizing="us">
+
+	1.2
+</shoeSize>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="freemarker_demo"
+  id="myeclipse.1351499338218"
+  context-root="/freemarker_demo"
+  j2ee-spec="5.0"
+  archive="freemarker_demo.war">
+  <attributes>
+    <attribute name="webrootdir" value="WebRoot" />
+  </attributes>
+</project-module>
+

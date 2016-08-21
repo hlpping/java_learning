@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+		
+	<xsd:attribute name="allFrameSize">
+		<xsd:simpleType>
+			<xsd:union memberTypes="roadbikeSize mountainbikeSize" />
+		</xsd:simpleType>
+	</xsd:attribute>
+	
+	<xsd:simpleType name="roadbikeSize">
+		<xsd:restriction base="xsd:positiveInteger">
+			<xsd:enumeration value="46"/>
+			<xsd:enumeration value="55"/>
+			<xsd:enumeration value="60"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="mountainbikeSize">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="small"/>
+			<xsd:enumeration value="medium"/>
+			<xsd:enumeration value="large"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:element name="hello">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="welcome" type="xsd:string"/>
+			</xsd:sequence>
+			<xsd:attribute ref="allFrameSize" use="required" />
+		</xsd:complexType>	
+	</xsd:element>
+	
+	
+</xsd:schema>

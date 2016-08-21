@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!-- 
+	targetNamespace="http://www.example.org/1"
+	xmlns:tns="http://www.example.org/1" 
+	 -->		
+	 <xsd:element name="book" type="book_type"></xsd:element>
+	 <xsd:complexType name="book_type">
+	 	<xsd:sequence>
+			<xsd:element name="book_name" type="xsd:string"></xsd:element>	 	
+			<xsd:element name="book_author" type="xsd:date"></xsd:element>	
+	 	</xsd:sequence>
+	 </xsd:complexType>
+
+	 
+</xsd:schema>

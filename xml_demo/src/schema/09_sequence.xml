@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<helloworld xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:noNamespaceSchemaLocation="09_sequence.xsd">
+	<hello>sssssss</hello>
+	<world>sdfs</world>
+	
+	<hello>sssssss</hello>
+	<world>sdfs</world>
+	
+</helloworld>

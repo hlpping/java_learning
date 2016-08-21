@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+		
+	<xsd:element name="shoeSize">
+		<xsd:complexType>
+		
+			<xsd:simpleContent>
+				<xsd:extension base="xsd:decimal">
+					<xsd:attribute name="sizing" use="required">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:enumeration value="us"></xsd:enumeration>
+								<xsd:enumeration value="europe"></xsd:enumeration>
+								<xsd:enumeration value="uk"></xsd:enumeration>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:attribute>
+				</xsd:extension>
+			</xsd:simpleContent>
+			
+		</xsd:complexType>
+	</xsd:element>
+	
+</xsd:schema>

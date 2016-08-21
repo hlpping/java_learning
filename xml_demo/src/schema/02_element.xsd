@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+		
+	<xsd:element name="cat" type="xsd:string"></xsd:element>
+	<xsd:element name="dog" type="xsd:string"></xsd:element>
+	 
+	 <xsd:complexType name="myType">
+	 	<xsd:sequence minOccurs="1" maxOccurs="2">
+	 		<xsd:element ref="cat"/>
+			<xsd:element ref="dog"/>
+	 	</xsd:sequence>
+	 </xsd:complexType>
+	 
+	 <xsd:element name="pets" type="myType"></xsd:element>
+</xsd:schema>

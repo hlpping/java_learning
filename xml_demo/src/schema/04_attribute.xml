@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<person xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xsi:noNamespaceSchemaLocation="04_attribute.xsd" interest="1">
+	<hello></hello>
+	<world></world>
+</person>		
+		

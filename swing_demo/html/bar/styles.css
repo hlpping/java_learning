@@ -1,0 +1,43 @@
+@CHARSET "UTF-8";
+
+body {
+	margin: 0;
+	margin-top: 20px;
+}
+
+ul#menu {
+	font-family: Arial;
+	font-size: 14px;
+	background: url(under.gif);
+	padding: 0 0 0 8px;
+	list-style: none;
+	height: 35px;
+}
+
+#menu li {
+	float: left;
+}
+
+#menu li a {
+	display: block;
+	float: left;
+	line-height: 35px;
+	color: #ddd;
+	text-decoration: none;
+	padding: 0 0 0 14px;
+}
+
+#menu li a:hover {
+	color: #fff;
+	background: url(hover.gif);
+}
+
+#menu li a strong {
+	display: block;
+	padding: 0 14px 0 0;
+}
+
+#menu li a:hover strong {
+	color: #fff;
+	background: url(hover.gif) no-repeat right top;
+}
