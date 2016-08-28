@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.junit.Test;
 
 /**
  * 自定义缓存
@@ -14,7 +13,8 @@ import org.junit.Test;
  */
 public class CacheDemo {
 	private Map<String, Object> cache =new HashMap<String, Object>();
-	@Test
+	
+	
 	public void testname() throws Exception {
 		//map中没有数据 无法测试
 		getData("1");

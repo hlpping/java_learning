@@ -9,10 +9,10 @@ import java.util.Random;
  * @version 1.0 Nov 1, 2011
  */
 public class ThreadLocalTest {
-	private static ThreadLocal<Integer> x=new ThreadLocal<Integer>();
+	private static ThreadLocal<Integer> x = new ThreadLocal<Integer>();
 
 	public static void main(String[] args) {
-		for(int i=0;i<2;i++){
+		for (int i = 0; i < 2; i++) {
 			new Thread(new Runnable() {
 				public void run() {
 					int data = new Random().nextInt();
@@ -22,9 +22,10 @@ public class ThreadLocalTest {
 					new A().get();
 					new B().get();
 				}
-			}).start();			
+			}).start();
 		}
 	}
+
 	static class A {
 		public void get() {
 			int data = x.get();
@@ -32,6 +33,7 @@ public class ThreadLocalTest {
 					+ " get data :" + data);
 		}
 	}
+
 	static class B {
 		public void get() {
 			int data = x.get();

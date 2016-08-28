@@ -1,15 +1,12 @@
 package com.tjbklx1.thread.base.demo01;
 
-import org.junit.Test;
 
 public class ThreadDemo01 {
 
-	@Test
 	public void test01() throws InterruptedException {
 		new MyThread01().start();
 	}
 	
-	@Test
 	public void test02() throws InterruptedException {
 		new MyThread01().start();
 		for(int i=0;i<100;i++){
@@ -18,7 +15,6 @@ public class ThreadDemo01 {
 		}
 	}
 	
-	@Test
 	public void test03() throws InterruptedException {
 		MyThread01 myThread01 =new MyThread01();
 		myThread01.setDaemon(true);
