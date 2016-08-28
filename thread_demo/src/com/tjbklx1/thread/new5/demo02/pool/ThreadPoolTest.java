@@ -12,8 +12,7 @@ public class ThreadPoolTest {
 			threadPool.execute(new Runnable(){
 				public void run() {
 					for(int j=0;j<10;j++){
-						System.out.println(Thread.currentThread().getName()
-								+" is looping "+j+" for task of "+task);
+						System.out.println(Thread.currentThread().getName() + " is looping "+j+" for task of "+task);
 					}
 				}});			
 		}

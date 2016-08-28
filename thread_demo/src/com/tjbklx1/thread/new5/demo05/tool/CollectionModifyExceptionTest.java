@@ -1,4 +1,4 @@
-package com.tjbklx1.thread.new5;
+package com.tjbklx1.thread.new5.demo05.tool;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;

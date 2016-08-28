@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Demo05 {
 	public static void main(String[] args) {
-		ScheduledExecutorService pool = Executors.newScheduledThreadPool(2);
+		ScheduledExecutorService pool = Executors.newSingleThreadScheduledExecutor(); 
 		Thread t1 = new MyThread();
 		Thread t2 = new MyThread();
 		Thread t3 = new MyThread();
