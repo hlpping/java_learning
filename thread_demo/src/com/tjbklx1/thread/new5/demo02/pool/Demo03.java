@@ -1,12 +1,11 @@
-package com.tjbklx1.thread.pool;
+package com.tjbklx1.thread.new5.demo02.pool;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
-public class Demo04 {
+public class Demo03 {
 	public static void main(String[] args) {
-		ScheduledExecutorService pool = Executors.newScheduledThreadPool(2);
+		ExecutorService pool = Executors.newCachedThreadPool(); 
 		Thread t1 = new MyThread();
 		Thread t2 = new MyThread();
 		Thread t3 = new MyThread();
@@ -15,8 +14,11 @@ public class Demo04 {
 		pool.execute(t1);
 		pool.execute(t2);
 		pool.execute(t3);
-		pool.schedule(t4, 10, TimeUnit.MILLISECONDS);
-		pool.schedule(t5, 10, TimeUnit.MILLISECONDS);
+		pool.execute(t4);
+		pool.execute(t5);
+		
 		pool.shutdown();
 	}
 }
+
+

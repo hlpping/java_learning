@@ -1,11 +1,11 @@
-package com.tjbklx1.thread.pool;
+package com.tjbklx1.thread.new5.demo02.pool;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class Demo03 {
+public class Demo01 {
 	public static void main(String[] args) {
-		ExecutorService pool = Executors.newCachedThreadPool(); 
+		ExecutorService pool = Executors.newFixedThreadPool(2);
 		Thread t1 = new MyThread();
 		Thread t2 = new MyThread();
 		Thread t3 = new MyThread();
